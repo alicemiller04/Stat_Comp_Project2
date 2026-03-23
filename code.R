@@ -20,7 +20,7 @@ cycle_daily_df <- cycle_daily_df %>%
   mutate(
     # Task 1: month as ordered factor for plots/inference
     month <- factor(c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                  levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), ordered = TRUE)
+                  levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), ordered = TRUE),
     
     # Task 2: dow with explicit levels 
     dow <- factor(c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
