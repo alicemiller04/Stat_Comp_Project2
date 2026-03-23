@@ -16,25 +16,33 @@ library(patchwork); library(broom)
 load('cycle_daily_df.Rdata')
 
 # 2. Data Wrangling 
+
+cycle_daily_df <- cycle_daily_df %>% 
+  mutate(month = factor(month, levels = 1:12, labels = month.abb))
+
+
+
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
     # Task 1: month as ordered factor for plots/inference
-    month <- factor(month,
+    month = factor(month,
                     levels = 1:12,    
                     labels = month.abb, 
                     ordered = TRUE),
     
     # Task 2: dow with explicit levels 
-    dow <- factor(dow,
+    dow = factor(dow,
                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
                 ordered = TRUE),
+    
     # Task 3: trend as integer days since 2020-01-01
-    trend <- as.numeric(date - date[1], units = "days")
+    trend = as.numeric(date - date[1], units = "days")
     ) 
 
 #plots
 plot(cycle_daily_df$date,cycle_daily_df$count)
-boxplot( count ~ month , data = cycle_daily_df)
+boxplot(count ~ month , data = cycle_daily_df)
+
 
 # 3. Model Fitting
 # Note: Use factor(month) in formulas for M1-M3
