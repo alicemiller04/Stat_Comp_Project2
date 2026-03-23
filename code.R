@@ -50,6 +50,10 @@ idx <- sample(1:n, size = round(0.7*n))
 train <- cycle_daily_df[idx, ]
 test  <- cycle_daily_df[-idx, ]
 
+# switch variable temporarily
+train$month_num <- as.numeric(train$month)
+test$month_num  <- as.numeric(test$month)
+
 
 # Note: Use factor(month) in formulas for M1-M3
 m0 <- lm(count ~ temp_mean + weekend + month, data = train)
