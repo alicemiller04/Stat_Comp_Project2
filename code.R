@@ -47,6 +47,10 @@ m0 <- lm(count ~ temp_mean + weekend + month, data = cycle_daily_df)
 # m3 <- ...
 
 # 4. Cross-Validation Functions
+n = 2192
+idx <- sample(1:n, size = round(0.7*n))
+train <- cycle_daily_df[idx, ]
+test  <- cycle_daily_df[-idx, ]
 
 calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   # y     : vector of observed values
@@ -76,6 +80,11 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
 y = cycle_daily_df$count
 mu0 = predict(m0, newdata=test)$fit
 sigma0 = sqrt(summary(fit)$sigma^2 + predict(m0, newdata=cycle_daily_df, se.fit=TRUE)$se.fit^2)
+
+
+
+
+
 
 # 5. Leave-One-Year-Out CV Loop 
 # 6. CV by Month 
