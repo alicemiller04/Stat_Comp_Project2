@@ -79,23 +79,26 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   MAE <- mean(abs(y - mu))
   
   #DS
-  DS <- log(sigma^2) + (y - mu)^2 / sigma^2
+  DS <- mean(log(sigma^2) + ((y - mu)^2 / sigma^2))
   
   #IS
   lower <- mu - (qnorm(1-alpha/2) * sigma)
   upper <-mu + (qnorm(1-alpha/2) * sigma)
-  IS <-  (upper - lower) + (2/alpha)(lower - y) + (2/alpha)(y - upper)
+  IS <-  mean((upper - lower) + 
+    (2/alpha)* (lower - y) + 
+    (2/alpha)*(y - upper))
 
   #make a table with the results
-  return (list(RMSE = RMSE, MAE = MAE, DS = DS))
+  return (list(RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
 }
 
 #calc scores for m0
-y = test
+y = test$count
 mu0 = predict(m0, newdata=test)
-sigma0 = sqrt(summary(m0)$sigma^2 + predict(m0, newdata=test, se.fit=TRUE)$se.fit^2)
+pred_obj <- predict(m0, newdata = test, se.fit = TRUE)
+sigma0 = sqrt(summary(m0)$sigma^2 + pred_obj$se.fit^2)
 
-calc_scores(y, mu0, sigma0, alpha = 0.05)
+calc_scores(y = y, mu = mu0, sigma = sigma0, alpha = 0.05)
 
 # 5. Leave-One-Year-Out CV Loop 
 # 6. CV by Month 
