@@ -72,6 +72,11 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   IS <-  (upper - lower) + (2/alpha)(lower - y) + (2/alpha)(y - upper)
 }
 
+#calc scores for m0
+y0 = cycle_daily_df$count
+mu0 = predict(fit, newdata=test)$fit
+sigma0 = sqrt(summary(fit)$sigma^2 + predict(m0, newdata=cycle_daily_df, se.fit=TRUE)$se.fit^2)
+
 # 5. Leave-One-Year-Out CV Loop 
 # 6. CV by Month 
 # ...
