@@ -19,11 +19,14 @@ load('cycle_daily_df.Rdata')
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
     # Task 1: month as ordered factor for plots/inference
-  month <- factor(c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                  levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+    month <- factor(c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+                  levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), ordered = TRUE)
     
     # Task 2: dow with explicit levels 
-
+    dow <- factor(c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
+                levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), ordered = TRUE)
+  
+  
     # Task 3: trend as integer days since 2020-01-01
     
   )
