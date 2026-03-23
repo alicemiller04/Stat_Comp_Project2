@@ -30,9 +30,10 @@ cycle_daily_df <- cycle_daily_df %>%
     # Task 3: trend as integer days since 2020-01-01
     trend <- as.numeric(date - date[1], units = "days")
     ) 
-  
 
-
+#plots
+plot(cycle_daily_df$date,cycle_daily_df$count)
+boxplot( count ~ month , data = cycle_daily_df)
 
 # 3. Model Fitting
 # Note: Use factor(month) in formulas for M1-M3
