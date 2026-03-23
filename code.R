@@ -67,8 +67,8 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   DS <- log(sigma^2) + (y - mu)^2 / sigma^2
   
   #IS
-  lower <- mu - (qnorm(1-alpha) * sigma)
-  upper <-mu + (qnorm(1-alpha) * sigma)
+  lower <- mu - (qnorm(1-alpha/2) * sigma)
+  upper <-mu + (qnorm(1-alpha/2) * sigma)
   IS <-  (upper - lower) + (2/alpha)(lower - y) + (2/alpha)(y - upper)
 }
 
