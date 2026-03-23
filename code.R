@@ -19,12 +19,15 @@ load('cycle_daily_df.Rdata')
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
     # Task 1: month as ordered factor for plots/inference
-
+  month <- factor(c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+                  levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+    
     # Task 2: dow with explicit levels 
 
     # Task 3: trend as integer days since 2020-01-01
     
   )
+
 
 # 3. Model Fitting
 # Note: Use factor(month) in formulas for M1-M3
