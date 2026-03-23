@@ -85,8 +85,8 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   lower <- mu - (qnorm(1-alpha/2) * sigma)
   upper <-mu + (qnorm(1-alpha/2) * sigma)
   IS <-  mean((upper - lower) + 
-    (2/alpha)* (lower - y) + 
-    (2/alpha)*(y - upper))
+    (2/alpha)* pmax(0,(lower - y)) + 
+    (2/alpha)*pmax(0,(y - upper)))
 
   #make a table with the results
   return (list(RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
