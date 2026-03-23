@@ -37,7 +37,7 @@ cycle_daily_df <- cycle_daily_df %>%
 #plots
 plot(cycle_daily_df$date,cycle_daily_df$count)
 boxplot(count ~ month , data = cycle_daily_df)
-
+boxplot(count ~ dow , data = cycle_daily_df)
 
 # 3. Model Fitting
 # Note: Use factor(month) in formulas for M1-M3
