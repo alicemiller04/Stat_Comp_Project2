@@ -43,7 +43,9 @@ boxplot(count ~ dow , data = cycle_daily_df)
 
 # 3. Model Fitting
 
+#set the seed, defined test and training data, 
 n = 2192
+set.seed(1234)
 idx <- sample(1:n, size = round(0.7*n))
 train <- cycle_daily_df[idx, ]
 test  <- cycle_daily_df[-idx, ]
@@ -79,14 +81,17 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   lower <- mu - (qnorm(1-alpha/2) * sigma)
   upper <-mu + (qnorm(1-alpha/2) * sigma)
   IS <-  (upper - lower) + (2/alpha)(lower - y) + (2/alpha)(y - upper)
+
+  #make a table with the results
+  return (list(RMSE = RMSE, MAE = MAE, DS = DS))
 }
 
 #calc scores for m0
-y = cycle_daily_df$count
+y = test
 mu0 = predict(m0, newdata=test)
 sigma0 = sqrt(summary(m0)$sigma^2 + predict(m0, newdata=test, se.fit=TRUE)$se.fit^2)
 
-
+calc_scores(y, mu0, sigma0, alpha = 0.05)
 
 # 5. Leave-One-Year-Out CV Loop 
 # 6. CV by Month 
