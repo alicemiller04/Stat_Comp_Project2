@@ -50,7 +50,7 @@ test  <- cycle_daily_df[-idx, ]
 
 
 # Note: Use factor(month) in formulas for M1-M3
-m0 <- lm(count ~ temp_mean + weekend + month, data = test)
+m0 <- lm(count ~ temp_mean + weekend + month, data = train)
 # m1 <- ...
 # m2 <- ...
 # m3 <- ...
@@ -83,11 +83,8 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
 
 #calc scores for m0
 y = cycle_daily_df$count
-mu0 = predict(m0, newdata=test)$fit
-sigma0 = sqrt(summary(fit)$sigma^2 + predict(m0, newdata=cycle_daily_df, se.fit=TRUE)$se.fit^2)
-
-
-
+mu0 = predict(m0, newdata=test)
+sigma0 = sqrt(summary(m0)$sigma^2 + predict(m0, newdata=test, se.fit=TRUE)$se.fit^2)
 
 
 
