@@ -29,8 +29,10 @@ cycle_daily_df <- cycle_daily_df %>%
   
     # Task 3: trend as integer days since 2020-01-01
     ref_date <- ymd("2020-01-01"), #reference day 
-    trend <- as.numeric(difftime(date, ref_date)) # create variable of days since
-  )
+    trend <- as.numeric(difftime(date, ref_date)), # create variable of days since
+    days_since <- as.numeric(date - date[1], units = "days")
+    ) 
+  
 
 
 
