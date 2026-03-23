@@ -17,11 +17,6 @@ load('cycle_daily_df.Rdata')
 
 # 2. Data Wrangling 
 
-cycle_daily_df <- cycle_daily_df %>% 
-  mutate(month = factor(month, levels = 1:12, labels = month.abb))
-
-
-
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
     # Task 1: month as ordered factor for plots/inference
