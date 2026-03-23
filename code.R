@@ -1,13 +1,12 @@
 
 # ============================================================
 # Project 2: Modelling daily cycling demand in Edinburgh
-# Authors: [Name1], [Name2], [Name3]
+# Authors: Alice Miller, Saba Sitter, Jake Saunders
 # ============================================================
 
 #
 # Place the code needed in the Report_project02.Rmd, including documentation.
 #
-# is this here? again
 # 0. Packages
 library(ggplot2); library(dplyr); library(tidyr)
 library(lubridate); library(knitr); library(kableExtra)
