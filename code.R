@@ -56,6 +56,20 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   # Returns a named list with RMSE, MAE, DS, IS
   
   # Implement RMSE, MAE, DS, and IS here
+  
+  #RMSE
+  RMSE <- sqrt(mean((y - mu)^2))
+  
+  #MAE
+  MAE <- mean(abs(y - mu))
+  
+  #DS
+  DS <- log(sigma^2) + (y - mu)^2 / sigma^2
+  
+  #IS
+  lower <- mu - (qnorm(1-alpha) * sigma)
+  upper <-mu + (qnorm(1-alpha) * sigma)
+  IS <-  (upper - lower) + (2/alpha)(lower - y) + (2/alpha)(y - upper)
 }
 
 # 5. Leave-One-Year-Out CV Loop 
