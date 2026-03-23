@@ -39,18 +39,23 @@ plot(cycle_daily_df$date,cycle_daily_df$count)
 boxplot(count ~ month , data = cycle_daily_df)
 boxplot(count ~ dow , data = cycle_daily_df)
 
+
+
 # 3. Model Fitting
+
+n = 2192
+idx <- sample(1:n, size = round(0.7*n))
+train <- cycle_daily_df[idx, ]
+test  <- cycle_daily_df[-idx, ]
+
+
 # Note: Use factor(month) in formulas for M1-M3
-m0 <- lm(count ~ temp_mean + weekend + month, data = cycle_daily_df)
+m0 <- lm(count ~ temp_mean + weekend + month, data = test)
 # m1 <- ...
 # m2 <- ...
 # m3 <- ...
 
 # 4. Cross-Validation Functions
-n = 2192
-idx <- sample(1:n, size = round(0.7*n))
-train <- cycle_daily_df[idx, ]
-test  <- cycle_daily_df[-idx, ]
 
 calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   # y     : vector of observed values
