@@ -77,7 +77,7 @@ plot_month + plot_dow
 
 Figure 4 shows the relationship between temperature and daily cyclist counts.
 
-```{r fig-scatter, fig.cap = "Scatter plot of daily cyclist counts against mean temperature. The dashed red line shows a linear fit (M0/M1), while the blue curve suggests a nonlinear relationship (M2)."}
+```{r fig-scatter, fig.cap = "Scatter plot of daily cyclist counts against mean temperature."}
 plot_temp_scatter
 ```
 
