@@ -35,6 +35,8 @@ Required content (remove before submission):
   - Why this is useful for transport planning in Edinburgh
 Do NOT describe the report structure here.
 -->
+The "cycle daily" dataset contains the number of cyclists per day across Edinburgh. This data comes from sensors at specific locations therefore it is possible they don't include every cyclist however they do give a good general idea of the trend against different days of the week, seasons, years and temperature. Our aim with the models is: to see if we can accurately predict the number of cyclists over a given period based on different factors, to see which factors have the most influence, to see if there is any other contributing effects to take into account and to extrapolate demand for the next 10 years.
+Edinburgh is a very dense city that relies heavily on public transport for its residents and tourists to get around. For future funding allocation and planning it is important to know how many cyclists are on the road, to see if the infrastructure (cycle lanes, crossings etc) need to increase to meet demand. It also lets the council know if they should invest more in other schemes such as the Voi bikes. 
 
 # Exploratory data analysis
 

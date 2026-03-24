@@ -15,7 +15,7 @@ library(patchwork); library(broom)
 # 1. Load data
 load('cycle_daily_df.Rdata')
 
-# 2. Data Wrangling 
+# 2.1 Data Wrangling 
 
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
@@ -34,16 +34,16 @@ cycle_daily_df <- cycle_daily_df %>%
     trend = as.numeric(date - date[1], units = "days")
     ) 
 
-#plots
-plot(cycle_daily_df$date,cycle_daily_df$count)
-boxplot(count ~ month , data = cycle_daily_df)
-boxplot(count ~ dow , data = cycle_daily_df)
+# 2.2 exploratory plots
+#plot(cycle_daily_df$date,cycle_daily_df$count)
+#boxplot(count ~ month , data = cycle_daily_df)
+#boxplot(count ~ dow , data = cycle_daily_df)
 
 
 
 # 3. Model Fitting
 
-#set the seed, defined test and training data, 
+# set the seed, defined test and training data, 
 n = 2192
 set.seed(1234)
 idx <- sample(1:n, size = round(0.7*n))
@@ -67,7 +67,8 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   # y     : vector of observed values
   # mu    : vector of predictive means (from predict(fit, newdata=test)$fit)
   # sigma : vector of predictive SDs. Combine residual error and mean uncertainty:
-  #         sigma = sqrt(summary(fit)$sigma^2 + predict(fit, newdata=test, se.fit=TRUE)$se.fit^2)
+  #         sigma = sqrt(summary(fit)$sigma^2 +
+  # predict(fit, newdata=test, se.fit=TRUE)$se.fit^2)
   # Returns a named list with RMSE, MAE, DS, IS
   
   # Implement RMSE, MAE, DS, and IS here
@@ -88,11 +89,11 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
     (2/alpha)* pmax(0,(lower - y)) + 
     (2/alpha)*pmax(0,(y - upper)))
 
-  #make a table with the results
+  # make a table with the results
   return (list(RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
 }
 
-#calc scores for m0
+# calc scores for m0
 y = test$count
 mu0 = predict(m0, newdata=test)
 pred_obj <- predict(m0, newdata = test, se.fit = TRUE)
