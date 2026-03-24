@@ -50,11 +50,35 @@ Required content:
 Every figure must have a caption and be explicitly discussed in the text.
 -->
 
+Table 1, shows the summary statistics for the base dataset. It gives the mean, standard deviation (SD), the minimum value and the maximum value for count (number of cyclists per day), the temperature mean, temperature minimum and temperature maximum.
+
 ```{r q2-model, echo=FALSE}
 
 knitr::kable(summary_stats, 
-             digits = 4, 
-             caption = "Summary statistics for daily cyclist counts and temperature variables (2020-2025)")
+             digits = 4, # Number of decimal places
+             caption = "Summary statistics for daily cyclist counts and temperature variables")
+```
+
+## Time Series Analysis
+
+Figure 1 shows the daily cycling counts from 2020 to 2025.
+
+```{r fig-timeseries, fig.cap = "Daily cycling counts in Edinburgh with a smoother."}
+plot_timeseries
+```
+
+## Seasonal and Weekly Patterns
+
+Figures 2 and 3 illustrate how cycling demand changes across months and days of the week.
+
+```{r fig-boxplots, fig.cap = "Distribution of daily cyclist counts by month (left) and day of week (right).", fig.height = 4, fig.width = 10}
+plot_month + plot_dow
+```
+
+Figure 4 shows the relationship between temperature and daily cyclist counts.
+
+```{r fig-scatter, fig.cap = "Scatter plot of daily cyclist counts against mean temperature. The dashed red line shows a linear fit (M0/M1), while the blue curve suggests a nonlinear relationship (M2)."}
+plot_temp_scatter
 ```
 
 # Baseline model M0

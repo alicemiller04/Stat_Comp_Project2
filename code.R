@@ -49,6 +49,41 @@ summary_stats <- cycle_daily_df %>%
                names_to = c("Variable", "Statistic"), 
                names_sep = "\\.") %>% # Split at the dot instead of the underscore
   pivot_wider(names_from = Statistic, values_from = value)
+
+# Time series of daily counts 2020-2025 with a smoother
+plot_timeseries <- ggplot(cycle_daily_df, aes(x = date, y = count)) +
+  geom_line(alpha = 0.4, color = "gray") + 
+  geom_smooth(method = "gam", color = "blue", se = TRUE) + # The smoother line
+  labs(
+    title = "Daily Cycling Count in Edinburgh (2020-2025)",
+    x = "Year",
+    y = "Total Daily Cyclist Count"
+  ) +
+  theme_minimal()
+
+# Boxplots of count by month and by day of week.
+
+# Boxplot by Month 
+plot_month <- ggplot(cycle_daily_df, aes(x = month, y = count)) + # Use fill = month to add colour
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "Cycling Demand by Month", x = "Month", y = "Count") +
+  theme_minimal()
+
+# Boxplot by Day of Week
+plot_dow <- ggplot(cycle_daily_df, aes(x = dow, y = count)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "Cycling Demand by Day of Week", x = "Day", y = "Count") +
+  theme_minimal()
+
+# Scatter plot of count vs mean temperature
+plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
+  geom_point(alpha = 0.3) + # alpha changes the opaqueness of the points
+  labs(
+    title = "Cycling Count vs. Mean Temperature",
+    x = "Mean Daily Temperature (°C)",
+    y = "Total Daily Cyclist Count"
+  ) +
+  theme_minimal()
            
 #plot(cycle_daily_df$date,cycle_daily_df$count)
 #boxplot(count ~ month , data = cycle_daily_df)
