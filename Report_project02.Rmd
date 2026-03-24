@@ -50,6 +50,13 @@ Required content:
 Every figure must have a caption and be explicitly discussed in the text.
 -->
 
+```{r q2-model, echo=FALSE}
+
+knitr::kable(summary_stats, 
+             digits = 4, 
+             caption = "Summary statistics for daily cyclist counts and temperature variables (2020-2025)")
+```
+
 # Baseline model M0
 
 <!--

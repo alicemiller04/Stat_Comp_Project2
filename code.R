@@ -35,6 +35,21 @@ cycle_daily_df <- cycle_daily_df %>%
     ) 
 
 # 2.2 exploratory plots
+
+# Summary table for count, temp_mean, temp_min, temp_max
+summary_stats <- cycle_daily_df %>%
+  summarise(across(c(count, temp_mean, temp_min, temp_max), 
+           list(Mean = ~mean(.x), 
+                SD = ~sd(.x), 
+                Min = ~min(.x), 
+                Max = ~max(.x)),
+                .names = "{.col}.{.fn}")) %>% # use dots in variable names instead of underscore
+  # Reshape for a vertical table
+  pivot_longer(everything(), 
+               names_to = c("Variable", "Statistic"), 
+               names_sep = "\\.") %>% # Split at the dot instead of the underscore
+  pivot_wider(names_from = Statistic, values_from = value)
+           
 #plot(cycle_daily_df$date,cycle_daily_df$count)
 #boxplot(count ~ month , data = cycle_daily_df)
 #boxplot(count ~ dow , data = cycle_daily_df)
