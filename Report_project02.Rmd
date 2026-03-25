@@ -27,14 +27,6 @@ source("code.R") # Runs all models and creates tables/plots in the background
 
 # Introduction
 
-<!--
-Required content (remove before submission):
-3-5 sentences covering:
-  - What the dataset is and where it comes from
-  - What the modelling goal is
-  - Why this is useful for transport planning in Edinburgh
-Do NOT describe the report structure here.
--->
 The "cycle daily" dataset  consists of approximately 2,180 daily observations ranging from 2020 to 2025, sourced from Edinburgh's network of automatic cycling counters, along with local weather and temporal data. This data comes from sensors at specific locations across the city, so it's possible not every cyclist is accounted for. However, they are a good indicator of how cycling demand varies across different days and weather patterns. Edinburgh relies heavily on public transport for its residents and tourists to navigate the city. For future funding allocation and planning, it is important to know how many cyclists are on the road in order to evaluate whether the infrastructure (cycle lanes, crossings etc) and investment in schemes (rentable Voi bikes) need to adapt to meet demand. The modelling goal is to develop a sequence of increasingly complex linear regression models to isolate how temporal and weather variables, such as the day of the week and the temperature, influence cycling demand. Ultimately, the goal is to extrapolate cycling demand to the future so that Edinburgh City Council and Transport Scotland can optimise infrastructure investment over the next decade to align with their active travel priorities.
 
 
