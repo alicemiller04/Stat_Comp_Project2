@@ -142,7 +142,9 @@ plot(m2)
 
 # 4. Cross-Validation Functions
 
-calc_scores <- function(y, mu, sigma, alpha = 0.05) {
+# 4. Cross-Validation Functions
+
+calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
   # y     : vector of observed values
   # mu    : vector of predictive means (from predict(fit, newdata=test)$fit)
   # sigma : vector of predictive SDs. Combine residual error and mean uncertainty:
@@ -165,30 +167,12 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05) {
   lower <- mu - (qnorm(1-alpha/2) * sigma)
   upper <-mu + (qnorm(1-alpha/2) * sigma)
   IS <-  mean((upper - lower) + 
-    (2/alpha)* pmax(0,(lower - y)) + 
-    (2/alpha)*pmax(0,(y - upper)))
-
+                (2/alpha)* pmax(0,(lower - y)) + 
+                (2/alpha)*pmax(0,(y - upper)))
+  
   # make a table with the results
-  return (list(RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
+  return (data.frame(Model = model_name, RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
 }
-
-# calc scores for m0
-y = test$count
-mu0 = predict(m0, newdata=test)
-pred_obj <- predict(m0, newdata = test, se.fit = TRUE)
-sigma0 = sqrt(summary(m0)$sigma^2 + pred_obj$se.fit^2)
-
-calc_scores(y = y, mu = mu0, sigma = sigma0, alpha = 0.05)
-
-y = test$count
-mu0 = predict(m1, newdata=test)
-pred_obj <- predict(m1, newdata = test, se.fit = TRUE)
-sigma0 = sqrt(summary(m1)$sigma^2 + pred_obj$se.fit^2)
-
-calc_scores(y = y, mu = mu0, sigma = sigma0, alpha = 0.05)
-
-
-
 
 
 
