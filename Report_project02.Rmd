@@ -32,33 +32,37 @@ The "cycle daily" dataset  consists of approximately 2,180 daily observations ra
 
 # Exploratory data analysis
 
-To begin investigating the impact of weather on the number of daily cyclists, we begun with some exploratory data analysis. A table displaying the summary statistics for the weather data and number of daily cyclists is as follows:
+To begin investigating the impact of weather on the number of daily cyclists, we begun with some exploratory data analysis. Table 1 displays the summary statistics for the weather data and number of daily cyclists is as follows:
 
-#summary statistics table for count, temp_mean, temp_min, temp_max
-```{r summary stats exploratory table}
-summary_stats
+## Summary Statistics table for count, temp_mean, temp_min, temp_max
+
+```{r summary stats exploratory table, echo=FALSE}
+
+knitr::kable(summary_stats, 
+             digits = 2, 
+             caption = "Summary Statistics for count, temp mean, temp min, temp max")
 ```
 We can see that the number of daily cyclists varies from $1,264$ to $43,864$, an increase of $\approx 3470 \%$, and the variation is very high. Intuitively, one would think that a warmer average weather would lead to more cyclists. 
 
-We then plotted a time series of the daily cyclist count from 2020 to 2025. 
+We then plotted a time series of the daily cyclist count from 2020 to 2025 (figure 1). 
 
-#Time series of daily counts 2020-2025 with a smoother.
-```{r time series of daily counts with a smoother}
+## Time series of daily counts 2020-2025 with a smoother.
+```{r time series of daily counts with a smoother, fig.cap="Time series of daily counts 2020-2025 with a smoother"}
 plot_timeseries
 ```
 We can see from the time series that there are yearly fluctuations, with peaks and troughs occuring yearly. Overall, the cyclist count seems to be decreasing. There is a visible peak in 2022, which we investigate. We then created boxplots of the daily cyclist count by month and by the day of week. 
 
 
-#Boxplots of count by month and by day of week.
-```{r boxplots of count by month and day of week}
+## Boxplots of count by month and by day of week.
+```{r boxplots of count by month and day of week, fig.cap="Boxplots of count by month and by day of week"}
 library(gridExtra)
 grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 We can see from these plots that the winter months have slightly lower cyclist counts, with the other months remaining relatively constant. This indicates that the month does not have a tremendous impact on the number of daily cyclists outside of January and December. From the second boxplot, there appear to be less cyclists on Mondays and Sundays, with the other days again appearing relatively constant. 
 
-#Scatter plot of count vs temp_mean.
+## Scatter plot of count vs temp_mean.
 
-```{r scatter plot of count vs temp_mean}
+```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of count vs temperature mean"}
 plot_temp_scatter
 ```
 
