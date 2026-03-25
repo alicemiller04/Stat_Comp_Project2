@@ -12,6 +12,9 @@ library(ggplot2); library(dplyr); library(tidyr)
 library(lubridate); library(knitr); library(kableExtra)
 library(patchwork); library(broom)
 
+tinytex::tlmgr_install("multirow")
+tinytex::tlmgr_update()
+
 # 1. Load data
 load('cycle_daily_df.Rdata')
 
