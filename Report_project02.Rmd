@@ -3,12 +3,12 @@ title: 'Project 2: Modelling daily cycling demand in Edinburgh'
 author: 'Group members: Alice Miller, Saba Sitter, Jake Saunders'
 date: 'Word count: [XXX words]'
 output:
+  html_document:
+    df_print: paged
   pdf_document:
     number_sections: true
     fig_caption: true
     latex_engine: xelatex
-  html_document:
-    df_print: paged
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{float}
@@ -98,7 +98,8 @@ $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{weekend
 
 Table 2 shows the summary statistics for model 0.
 
-```{r summary for m0, echo=FALSE}
+```{r summary for m0, echo=FALSE} 
+##notice the p values all 0 bc rounding
 
 knitr::kable(summary(m0)$coefficients, 
              digits = 2, 
@@ -109,17 +110,16 @@ Residuals vs fitted and normal QQ diagnostic plots.
 
 ```{r r vs f and qq plots m0, fig.cap="Boxplots of count by month and by day of week"}
 grid.arrange(p1_m0,p2_m0, ncol = 2)
-grid.arrange(p1_m0,p2_m0, ncol = 2)
-par(c(2,2))
-plot(m0)
 plot(m0, which = 4)
 
 ```
 
-There is some fanning of the residuals, but overall the mean residuals stays constant.
+Model 0 (m0) shows a mean variance of 0, independent of the fitted values.
+The residuals show a non-linear pattern, with an arguable 'n' shape above the mean line, indicating there is an underlying non-linear structure yet to be included in our model.
+
 The QQ plot demonstrates right skewing and heavy tail in the positive quantiles - 
   thus the normality assumption for linear regression is violated.
-Observe the mean standardised reiduals decreases slightly as leverage increases.
+This indicates the model is particularly bad at predicting high count observations.
 
 # Observe the high influence points 953 823, 1806
 
@@ -142,7 +142,56 @@ For each model:
 -->
 
 ## Model M1: Trend and factor 
+
+###mathematical expression
+
+Rational for m1 over m0:
+
+M1 has the granularity for the effect of different weekdays rather than mere weekend or non weekend effects.
+Changing month to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
+
+We omit the weekend term and numerical version of month to avoid collinearity with their 'factor' versions and because covariate dow is collinear with weekend.
+
+
+```{r side by side comparison of M0 and M1}
+grid.arrange(p1_m0,p2_m0,p1_m1,p2_m1, nrow = 2, ncol = 2)
+```
+
+Observe in the bottom left: the mean residual line follows a sigmoid shape, 
+suggesting the linear assumption is still violated for model 1.
+On a positive note, the 'n' pattern is less pronounced for model 1.
+The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0), which suggests the prediction for low count days is better.
+
+
 ## Model M2: Nonlinear temperature
+
+
+
+
+
+
+
+```{r}
+grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
+
+
+par(mfrow = c(2, 2))
+
+# M1 Diagnostics
+plot(m1, which = 1, main = "M1: Residuals vs Fitted")
+plot(m1, which = 2, main = "M1: Normal Q-Q")
+# M2 Diagnostics
+plot(m2, which = 1, main = "M2: Residuals vs Fitted")
+plot(m2, which = 2, main = "M2: Normal Q-Q")
+
+
+
+              
+```
+
+
+
+
 ## Model M3: [your extension title]
 
 # Evaluation

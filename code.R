@@ -100,21 +100,24 @@ plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = fac
 
 
 # 3. Model Fitting
-
-# set the seed, defined test and training data, 
-n = 2192
-set.seed(1234) # for reproducibility 
-idx <- sample(1:n, size = round(0.7*n))
-train <- cycle_daily_df[idx, ]
-test  <- cycle_daily_df[-idx, ]
-
 # Note: Use factor(month) in formulas for M1-M3
-m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), data = cycle_daily_df)
+m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), 
+         data = cycle_daily_df)
+
 ## m0 + factor(month) unsure what double parameters - choose factor version to avoid collinearity
-m1 <- lm(count ~ temp_mean + as.numeric(weekend) + trend + 
-           factor(month) + factor(dow), data = cycle_daily_df)
+m1_literal<- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month) + 
+           trend + factor(month) + factor(dow), 
+         data = cycle_daily_df)
+##m1_literal has collinear terms so we define the factor versions of month and 
+#dow and omit the weekend.
+
+m1 <- lm(count ~ temp_mean + trend + factor(month) + factor(dow), 
+         data = cycle_daily_df)
+
 m2 <- lm(count ~ I(temp_mean^2) + as.numeric(weekend) + trend + 
            factor(month) + factor(dow), data = cycle_daily_df )
+
+
 #m3 <- lm()
 
 
@@ -171,6 +174,7 @@ p2_m1 <- ggplot(m1_diag, aes(sample = .resid)) +
        x = "Theoretical Quantiles",
        y = "Sample Quantiles") +
   theme_minimal()
+
 
 #m2
 # Add residuals and fitted values to the dataframe.
@@ -358,31 +362,31 @@ table2_final <- bind_rows(table2_results) %>%
 table2_final
 
 #table 3 - trend coefficients from M1 - M3
-
-#fitting full models
-m1_full <- lm(models_list$m1, data = cycle_daily_df)
-m2_full <- lm(models_list$m2, data = cycle_daily_df)
-m3_full <- lm(models_list$m3, data = cycle_daily_df)
-
-#getting the trend from each model
-tr1 <- coef(m1_full)[["trend"]]
-tr2 <- coef(m2_full)[["trend"]]
-tr3 <- coef(m3_full)[["trend"]]
-
-#building table 3
-table3_final <- data.frame(
-  #defining the rows as the 3 models
-  Model = c("M1", "M2", "M3"),
-  `Daily change (cyclists/day)` = c(tr1, tr2, tr3), #defining cyclists per day
-  `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, tr3 * 365), #defining cyclists per year
-  check.names = FALSE
-) %>%
-  mutate(
-    `Daily change (cyclists/day)` = round(`Daily change (cyclists/day)`, 3), #rounding to 3
-    `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
-  )
-
-print(table3_final)
+# 
+# #fitting full models
+# m1_full <- lm(models_list$m1, data = cycle_daily_df)
+# m2_full <- lm(models_list$m2, data = cycle_daily_df)
+# m3_full <- lm(models_list$m3, data = cycle_daily_df)
+# 
+# #getting the trend from each model
+# tr1 <- coef(m1_full)[["trend"]]
+# tr2 <- coef(m2_full)[["trend"]]
+# tr3 <- coef(m3_full)[["trend"]]
+# 
+# #building table 3
+# table3_final <- data.frame(
+#   #defining the rows as the 3 models
+#   Model = c("M1", "M2", "M3"),
+#   `Daily change (cyclists/day)` = c(tr1, tr2, tr3), #defining cyclists per day
+#   `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, tr3 * 365), #defining cyclists per year
+#   check.names = FALSE
+# ) %>%
+#   mutate(
+#     `Daily change (cyclists/day)` = round(`Daily change (cyclists/day)`, 3), #rounding to 3
+#     `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
+#   )
+# 
+# print(table3_final)
 
 # 6. CV by Month 
 # ...
