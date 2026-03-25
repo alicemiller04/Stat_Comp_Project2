@@ -111,6 +111,29 @@ m1 <- lm(count ~ temp_mean + as.numeric(weekend) + trend +
 m2 <- lm(count ~ temp_mean + weekend + month + trend + factor(month) + factor(dow) + I(temp_mean^2))
 #m3 <- lm()
 
+
+
+#diagnostic plots for first 3 models  
+# 
+#  Residuals vs fitted and normal QQ diagnostic plots, side by side.
+#  Brief assessment: what does M0 get right and wrong? 
+#  What motivates M1?
+
+#m0
+
+par(mfrow = c(2, 2))
+plot(m0)
+
+#m1 
+plot(m1)
+
+#m2
+plot(m2)
+
+
+
+
+
 # 4. Cross-Validation Functions
 
 calc_scores <- function(y, mu, sigma, alpha = 0.05) {
@@ -157,6 +180,11 @@ pred_obj <- predict(m1, newdata = test, se.fit = TRUE)
 sigma0 = sqrt(summary(m1)$sigma^2 + pred_obj$se.fit^2)
 
 calc_scores(y = y, mu = mu0, sigma = sigma0, alpha = 0.05)
+
+
+
+
+
 
 
 
