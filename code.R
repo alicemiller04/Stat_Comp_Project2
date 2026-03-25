@@ -179,5 +179,51 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 
 
 # 5. Leave-One-Year-Out CV Loop 
+# Define your models in a list for easy looping
+models_list <- list(
+  m0,m1, m2, m3)
+
+years <- sort(unique(cycle_daily_df$year))
+results_list <- list()
+
+for (y in years) {
+  # Split: Extract one year for testing
+  train_data <- subset(cycle_daily_df, year != y)
+  test_data  <- subset(cycle_daily_df, year == y)
+  
+  for (mod_name in names(models_list)) {
+    # Fit the model on the remaining years
+    fit <- lm(models_list[[mod_name]], data = train_data)
+    
+    # Get predictive means (mu) and standard errors (se.fit)
+    pred_obj <- predict(fit, newdata = test_data, se.fit = TRUE)
+    mu <- pred_obj$fit
+    
+    # Calculate total predictive SD (sigma)
+    # Combining residual variance and uncertainty in the mean
+    res_std_error <- summary(fit)$sigma
+    sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
+    
+    # Run your calc_scores function
+    scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma)
+    
+    # Store result with identifiers
+    results_list[[paste(y, mod_name, sep="_")]] <- data.frame(
+      Split_Year = y,
+      Model = mod_name,
+      RMSE = scores$RMSE,
+      MAE  = scores$MAE,
+      DS   = scores$DS,
+      IS   = scores$IS
+    )
+  }
+}
+
+# Combine all lists into one clean master table
+full_cv_table <- do.call(rbind, results_list)
+
+
+
+
 # 6. CV by Month 
 # ...
