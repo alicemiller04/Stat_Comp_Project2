@@ -178,11 +178,49 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 
 
 
-# 5. Leave-One-Year-Out CV Loop 
-# Define your models in a list for easy looping
-models_list <- list(
-  m0,m1, m2, m3)
+# 4. Cross-Validation Functions
 
+calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
+  # y     : vector of observed values
+  # mu    : vector of predictive means (from predict(fit, newdata=test)$fit)
+  # sigma : vector of predictive SDs. Combine residual error and mean uncertainty:
+  #         sigma = sqrt(summary(fit)$sigma^2 +
+  # predict(fit, newdata=test, se.fit=TRUE)$se.fit^2)
+  # Returns a named list with RMSE, MAE, DS, IS
+  
+  # Implement RMSE, MAE, DS, and IS here
+  
+  #RMSE
+  RMSE <- sqrt(mean((y - mu)^2))
+  
+  #MAE
+  MAE <- mean(abs(y - mu))
+  
+  #DS
+  DS <- mean(log(sigma^2) + ((y - mu)^2 / sigma^2))
+  
+  #IS
+  lower <- mu - (qnorm(1-alpha/2) * sigma)
+  upper <-mu + (qnorm(1-alpha/2) * sigma)
+  IS <-  mean((upper - lower) + 
+                (2/alpha)* pmax(0,(lower - y)) + 
+                (2/alpha)*pmax(0,(y - upper)))
+  
+  # make a table with the results
+  return (data.frame(Model = model_name, RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
+}
+
+
+# 5. Leave-One-Year-Out CV Loop 
+# Define models in a list 
+models_list <- list(
+  m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
+  m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month), 
+  m2 = count~ temp_mean + as.numeric(weekend) + as.numeric(month), 
+  m3 = count~ temp_mean + as.numeric(weekend) + as.numeric(month))
+
+cycle_daily_df$date <- as.Date(cycle_daily_df$date)
+cycle_daily_df$year <- year(cycle_daily_df$date)
 years <- sort(unique(cycle_daily_df$year))
 results_list <- list()
 
@@ -205,22 +243,20 @@ for (y in years) {
     sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
     
     # Run your calc_scores function
-    scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma)
+    scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma, model_name = mod_name)
     
     # Store result with identifiers
-    results_list[[paste(y, mod_name, sep="_")]] <- data.frame(
-      Split_Year = y,
-      Model = mod_name,
-      RMSE = scores$RMSE,
-      MAE  = scores$MAE,
-      DS   = scores$DS,
-      IS   = scores$IS
-    )
+    results_list[[paste(y, mod_name, sep="_")]] <- scores %>% mutate(Split_Year = y)
+    
   }
 }
+#finding the average scores for each model and displaying
+all_cv_results <- bind_rows(results_list)
+table1_final <- all_cv_results %>%
+  group_by(Model) %>%
+  summarise(across(c(RMSE, MAE, DS, IS), mean))
+table1_final
 
-# Combine all lists into one clean master table
-full_cv_table <- do.call(rbind, results_list)
 
 
 
