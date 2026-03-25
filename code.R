@@ -90,12 +90,6 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
     y = "Total Daily Cyclist Count"
   ) +
   theme_minimal()
-           
-#plot(cycle_daily_df$date,cycle_daily_df$count)
-#boxplot(count ~ month , data = cycle_daily_df)
-#boxplot(count ~ dow , data = cycle_daily_df)
-
-
 
 # 3. Model Fitting
 
