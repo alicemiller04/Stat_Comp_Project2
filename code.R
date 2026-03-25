@@ -39,24 +39,26 @@ cycle_daily_df <- cycle_daily_df %>%
 # Summary table for count, temp_mean, temp_min, temp_max
 summary_stats <- cycle_daily_df %>%
   summarise(across(c(count, temp_mean, temp_min, temp_max), 
-           list(Mean = ~mean(.x), 
-                SD = ~sd(.x), 
-                Min = ~min(.x), 
-                Max = ~max(.x)),
-                .names = "{.col}.{.fn}")) %>% # use dots in variable names instead of underscore
+                   list(Mean = ~mean(.x), 
+                        SD = ~sd(.x), 
+                        Min = ~min(.x), 
+                        Max = ~max(.x)),
+                   .names = "{.col}.{.fn}")) %>% # use dots in variable names instead of underscore
   # Reshape for a vertical table
   pivot_longer(everything(), 
                names_to = c("Variable", "Statistic"), 
                names_sep = "\\.") %>% # Split at the dot instead of the underscore
   pivot_wider(names_from = Statistic, values_from = value)
 
+
 # Time series of daily counts 2020-2025 with a smoother
 plot_timeseries <- ggplot(cycle_daily_df, aes(x = date, y = count)) +
   geom_line(alpha = 0.4, color = "gray") + 
   geom_smooth(method = "gam", color = "blue", se = TRUE) + # The smoother line
+  scale_x_date(date_breaks = "9 months", date_labels = "%b %Y") + 
   labs(
     title = "Daily Cycling Count in Edinburgh (2020-2025)",
-    x = "Year",
+    x = "Date",
     y = "Total Daily Cyclist Count"
   ) +
   theme_minimal()
@@ -78,6 +80,7 @@ plot_dow <- ggplot(cycle_daily_df, aes(x = dow, y = count)) +
 # Scatter plot of count vs mean temperature
 plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   geom_point(alpha = 0.3) + # alpha changes the opaqueness of the points
+  geom_smooth(method = "lm", color = "red", se = TRUE) +
   labs(
     title = "Cycling Count vs. Mean Temperature",
     x = "Mean Daily Temperature (°C)",
