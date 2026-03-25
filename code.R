@@ -127,14 +127,73 @@ m2 <- lm(count ~ I(temp_mean^2) + as.numeric(weekend) + trend +
 
 #m0
 
-par(mfrow = c(2, 2))
-plot(m0)
+# Add residuals and fitted values to the dataframe.
+m0_diag <- augment(m0)
 
-#m1 
-plot(m1)
+# Plot Residuals vs Fitted for m0
+p1_m0 <- ggplot(m0_diag, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +
+  labs(title = "Residuals vs Fitted",
+       x = "Fitted Values",
+       y = "Residuals") +
+  theme_minimal()
+
+# Plot Normal Q-Q for m0
+p2_m0 <- ggplot(m0_diag, aes(sample = .resid)) +
+  stat_qq(alpha = 0.5) +
+  stat_qq_line(color = "red") +
+  labs(title = "Normal Q-Q Plot",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
+
+# m1 
+# Add residuals and fitted values to the dataframe.
+m1_diag <- augment(m1)
+
+# Residuals vs Fitted for M1
+p1_m1 <- ggplot(m1_diag, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.4) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +
+  labs(title = "M1: Residuals vs Fitted",
+       x = "Fitted Values",
+       y = "Residuals") +
+  theme_minimal()
+
+# Normal Q-Q Plot for M1
+p2_m1 <- ggplot(m1_diag, aes(sample = .resid)) +
+  stat_qq(alpha = 0.4) +
+  stat_qq_line(color = "red") +
+  labs(title = "M1: Normal Q-Q Plot",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
 
 #m2
-plot(m2)
+# Add residuals and fitted values to the dataframe.
+m2_diag <- augment(m2)
+
+# Residuals vs Fitted for M2
+p1_m2 <- ggplot(m2_diag, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.4) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +
+  labs(title = "M2: Residuals vs Fitted",
+       x = "Fitted Values",
+       y = "Residuals") +
+  theme_minimal()
+
+# Normal Q-Q Plot for M2
+p2_m2 <- ggplot(m2_diag, aes(sample = .resid)) +
+  stat_qq(alpha = 0.4) +
+  stat_qq_line(color = "red") +
+  labs(title = "M2: Normal Q-Q Plot",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
 
 
 
