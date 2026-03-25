@@ -95,21 +95,18 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
 
 # set the seed, defined test and training data, 
 n = 2192
-set.seed(1234)
+set.seed(1234) # for reproducibility 
 idx <- sample(1:n, size = round(0.7*n))
 train <- cycle_daily_df[idx, ]
 test  <- cycle_daily_df[-idx, ]
 
-# switch variable temporarily
-train$month_num <- as.numeric(train$month)
-test$month_num  <- as.numeric(test$month)
-
-
 # Note: Use factor(month) in formulas for M1-M3
-m0 <- lm(count ~ temp_mean + weekend + month, data = train)
-# m1 <- ...
-# m2 <- ...
-# m3 <- ...
+m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), data = train)
+## m0 + factor(month) unsure what double parameters - choose one to avoid collinearity
+m1 <- lm(count ~ temp_mean + as.numeric(weekend) + trend + 
+           factor(month) + factor(dow), data = train)
+m2 <- lm(count ~ temp_mean + weekend + month + trend + factor(month) + factor(dow) + I(temp_mean^2))
+#m3 <- lm()
 
 # 4. Cross-Validation Functions
 
@@ -150,6 +147,15 @@ pred_obj <- predict(m0, newdata = test, se.fit = TRUE)
 sigma0 = sqrt(summary(m0)$sigma^2 + pred_obj$se.fit^2)
 
 calc_scores(y = y, mu = mu0, sigma = sigma0, alpha = 0.05)
+
+y = test$count
+mu0 = predict(m1, newdata=test)
+pred_obj <- predict(m1, newdata = test, se.fit = TRUE)
+sigma0 = sqrt(summary(m1)$sigma^2 + pred_obj$se.fit^2)
+
+calc_scores(y = y, mu = mu0, sigma = sigma0, alpha = 0.05)
+
+
 
 # 5. Leave-One-Year-Out CV Loop 
 # 6. CV by Month 
