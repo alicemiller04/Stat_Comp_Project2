@@ -96,7 +96,7 @@ plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = fac
                     labels = c("Weekday", "Weekend"), name = "Day Type") +
   labs(title = "Distribution of Daily Cycle Counts by Month and Day Type",
        x = "Month", 
-       y = "Number of Cycles")
+       y = "Number of Cyclists")
 
 
 # 3. Model Fitting

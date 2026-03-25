@@ -73,6 +73,12 @@ plot_temp_scatter
 
 Figure 3 shows a scatter plot of daily counts vs the mean temperature for that day, with the red line being the regression line. There is a general trend as the temperature increases, so does the daily count which is as expected.
 
+## Extra Plots
+
+```{r Boxplots of weekend and weekday, fig.cap="Boxplots of count vs weekend or weekday over the months (across 2020 to 2025)"}
+plot_weekend_seas
+```
+Figure 4 shows for each month a boxplot for the different day types (weekends or weekdays). Generally the medians tend to be higher for the weekdays across all the months, but by varying amounts. June and Novemeber seems to have the biggest variance between the two days types
 
 # Baseline model M0
 
