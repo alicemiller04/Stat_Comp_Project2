@@ -250,13 +250,13 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
   # Implement RMSE, MAE, DS, and IS here
   
   #RMSE
-  RMSE <- sqrt(mean((y - mu)^2))
+  RMSE <- sqrt(mean((y - mu)^2, na.rm = TRUE))
   
   #MAE
   MAE <- mean(abs(y - mu))
   
   #DS
-  DS <- mean(log(sigma^2) + ((y - mu)^2 / sigma^2))
+  DS <- mean(log(sigma^2) + ((y - mu)^2 / sigma^2), na.rm = TRUE)
   
   #IS
   lower <- mu - (qnorm(1-alpha/2) * sigma)
@@ -270,6 +270,7 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 }
 
 
+
 # 5. Leave-One-Year-Out CV Loop 
 # Define models in a list ###change formulas.!!!
 models_list <- list(
@@ -281,7 +282,7 @@ models_list <- list(
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
 cycle_daily_df$year <- year(cycle_daily_df$date)
 years <- sort(unique(cycle_daily_df$year))
-results_list <- list()
+table1_results <- list()
 
 for (y in years) {
   # Split: Extract one year for testing
@@ -301,14 +302,15 @@ for (y in years) {
     res_std_error <- summary(fit)$sigma
     sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
     
-    # Run your calc_scores function
+    # Run  calc_scores 
     scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma, model_name = mod_name)
     
     # Store result with identifiers
-    results_list[[paste(y, mod_name, sep="_")]] <- scores %>% mutate(Split_Year = y)
+    table1_results[[paste(y, mod_name, sep="_")]] <- scores %>% mutate(Split_Year = y)
     
   }
 }
+
 #finding the average scores for each model and displaying
 all_cv_results <- bind_rows(results_list)
 table1_final <- all_cv_results %>%
@@ -317,6 +319,43 @@ table1_final <- all_cv_results %>%
 table1_final
 
 
+#Table 2, CV RMSE and DS by month for final model 
+mbest = models_list$m0 #NOTE change this 
+
+months_list <- month.name
+table2_results <- list()
+
+for (m in months_list){
+  
+  #extract one month to test 
+  train_data <- subset(cycle_daily_df, month(date, label = TRUE, abbr = FALSE) != m)
+  test_data  <- subset(cycle_daily_df, month(date, label = TRUE, abbr = FALSE) == m)
+  
+  # Fit the model on the remaining months
+  fit <- lm(mbest, data = train_data)
+  
+  # predict on the other month
+  pred_obj <- predict(fit, newdata = test_data, se.fit = TRUE)
+  
+  # Calculate total predictive SD (sigma)
+  # Combining residual variance and uncertainty in the mean
+  res_std_error <- summary(fit)$sigma
+  sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
+  
+  # Run calc_scores
+  scores <- calc_scores(y = test_data$count, mu = pred_obj$fit, sigma = sigma, model_name = mod_name)
+  
+  # Store result with identifiers
+  table2_results[[m]] <- data.frame(Month = m, RMSE = scores$RMSE, DS = scores$DS)
+}
+
+table2_final <- bind_rows(table2_results) %>%
+  mutate(
+    RMSE = round(RMSE, 1),
+    DS = round(DS, 2)
+  )
+
+table2_final
 
 
 
