@@ -78,6 +78,7 @@ Figure 3 shows a scatter plot of daily counts vs the mean temperature for that d
 ```{r Boxplots of weekend and weekday, fig.cap="Boxplots of count vs weekend or weekday over the months (across 2020 to 2025)"}
 plot_weekend_seas
 ```
+
 Figure 4 shows for each month a boxplot for the different day types (weekends or weekdays). Generally the medians tend to be higher for the weekdays across all the months, but by varying amounts. June and Novemeber seems to have the biggest variance between the two days types
 
 # Baseline model M0
@@ -90,6 +91,26 @@ Required content:
   4. Brief assessment: what does M0 get right and wrong? 
      What motivates M1?
 -->
+
+The equation for M0 is:
+
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2)$$
+
+Table 2 shows the summary statistics for model 0.
+
+```{r summary for m0, echo=FALSE}
+
+knitr::kable(summary(m0)$coefficients, 
+             digits = 2, 
+             caption = "Summary of model M")
+```
+
+Residuals vs fitted and normal QQ diagnostic plots.
+
+```{r r vs f and qq plots m0, fig.cap="Boxplots of count by month and by day of week"}
+grid.arrange(p1_m0,p2_m0, ncol = 2)
+```
+
 
 # Proposed models M1--M3
 
