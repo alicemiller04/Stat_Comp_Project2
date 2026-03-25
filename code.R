@@ -312,7 +312,7 @@ for (y in years) {
 }
 
 #finding the average scores for each model and displaying
-all_cv_results <- bind_rows(results_list)
+all_cv_results <- bind_rows(table1_results)
 table1_final <- all_cv_results %>%
   group_by(Model) %>%
   summarise(across(c(RMSE, MAE, DS, IS), mean))
