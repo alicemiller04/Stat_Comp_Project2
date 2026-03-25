@@ -272,7 +272,7 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 
 
 # 5. Leave-One-Year-Out CV Loop 
-# Define models in a list ###change formulas.!!!
+# Define models in a list ###change formulas!!!
 models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
   m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month), 
@@ -320,7 +320,7 @@ table1_final
 
 
 #Table 2, CV RMSE and DS by month for final model 
-mbest = models_list$m0 #NOTE change this 
+mbest = models_list$m3 
 
 months_list <- month.name
 table2_results <- list()
@@ -357,7 +357,32 @@ table2_final <- bind_rows(table2_results) %>%
 
 table2_final
 
+#table 3 - trend coefficients from M1 - M3
 
+#fitting full models
+m1_full <- lm(models_list$m1, data = cycle_daily_df)
+m2_full <- lm(models_list$m2, data = cycle_daily_df)
+m3_full <- lm(models_list$m3, data = cycle_daily_df)
+
+#getting the trend from each model
+tr1 <- coef(m1_full)[["trend"]]
+tr2 <- coef(m2_full)[["trend"]]
+tr3 <- coef(m3_full)[["trend"]]
+
+#building table 3
+table3_final <- data.frame(
+  #defining the rows as the 3 models
+  Model = c("M1", "M2", "M3"),
+  `Daily change (cyclists/day)` = c(tr1, tr2, tr3), #defining cyclists per day
+  `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, tr3 * 365), #defining cyclists per year
+  check.names = FALSE
+) %>%
+  mutate(
+    `Daily change (cyclists/day)` = round(`Daily change (cyclists/day)`, 3), #rounding to 3
+    `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
+  )
+
+print(table3_final)
 
 # 6. CV by Month 
 # ...
