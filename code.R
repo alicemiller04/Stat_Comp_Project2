@@ -109,12 +109,12 @@ train <- cycle_daily_df[idx, ]
 test  <- cycle_daily_df[-idx, ]
 
 # Note: Use factor(month) in formulas for M1-M3
-m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), data = train)
+m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), data = cycle_daily_df)
 ## m0 + factor(month) unsure what double parameters - choose factor version to avoid collinearity
 m1 <- lm(count ~ temp_mean + as.numeric(weekend) + trend + 
-           factor(month) + factor(dow), data = train)
+           factor(month) + factor(dow), data = cycle_daily_df)
 m2 <- lm(count ~ I(temp_mean^2) + as.numeric(weekend) + trend + 
-           factor(month) + factor(dow), data = train )
+           factor(month) + factor(dow), data = cycle_daily_df )
 #m3 <- lm()
 
 
@@ -212,7 +212,7 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 
 
 # 5. Leave-One-Year-Out CV Loop 
-# Define models in a list 
+# Define models in a list ###change formulas.!!!
 models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
   m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month), 
