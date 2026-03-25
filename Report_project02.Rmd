@@ -47,17 +47,23 @@ We can see that the number of daily cyclists varies from $1,264$ to $43,864$, an
 We then plotted a time series of the daily cyclist count from 2020 to 2025 (figure 1). 
 
 ## Time series of daily counts 2020-2025 with a smoother.
-```{r time series of daily counts with a smoother, fig.cap="Time series of daily counts 2020-2025 with a smoother"}
+
+Below is ...
+
+```{r time series, fig.cap="Time series of daily counts 2020-2025 with a smoother"}
 plot_timeseries
 ```
+
+
 We can see from the time series that there are yearly fluctuations, with peaks and troughs occuring yearly. Overall, the cyclist count seems to be decreasing. There is a visible peak in 2022, which we investigate. We then created boxplots of the daily cyclist count by month and by the day of week. 
 
 
 ## Boxplots of count by month and by day of week.
 ```{r boxplots of count by month and day of week, fig.cap="Boxplots of count by month and by day of week"}
-library(gridExtra)
 grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
+
+
 We can see from these plots that the winter months have slightly lower cyclist counts, with the other months remaining relatively constant. This indicates that the month does not have a tremendous impact on the number of daily cyclists outside of January and December. From the second boxplot, there appear to be less cyclists on Mondays and Sundays, with the other days again appearing relatively constant. 
 
 ## Scatter plot of count vs temp_mean.
