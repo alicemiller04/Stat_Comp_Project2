@@ -108,7 +108,7 @@ m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), data = tra
 ## m0 + factor(month) unsure what double parameters - choose one to avoid collinearity
 m1 <- lm(count ~ temp_mean + as.numeric(weekend) + trend + 
            factor(month) + factor(dow), data = train)
-m2 <- lm(count ~ temp_mean + weekend + month + trend + factor(month) + factor(dow) + I(temp_mean^2))
+m2 <- lm(count ~ temp_mean + weekend + month + trend + factor(month) + factor(dow) + I(temp_mean^2), data = train)
 #m3 <- lm()
 
 
