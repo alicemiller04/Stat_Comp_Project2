@@ -88,6 +88,17 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   ) +
   theme_minimal()
 
+##non trivial plot 
+plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = factor(weekend))) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.7) + # Clean boxes for the "average"
+  theme_minimal() +
+  scale_fill_manual(values = c("0" = "#56B4E9", "1" = "#E69F00"), 
+                    labels = c("Weekday", "Weekend"), name = "Day Type") +
+  labs(title = "Distribution of Daily Cycle Counts by Month and Day Type",
+       x = "Month", 
+       y = "Number of Cycles")
+
+
 # 3. Model Fitting
 
 # set the seed, defined test and training data, 
@@ -99,10 +110,11 @@ test  <- cycle_daily_df[-idx, ]
 
 # Note: Use factor(month) in formulas for M1-M3
 m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), data = train)
-## m0 + factor(month) unsure what double parameters - choose one to avoid collinearity
+## m0 + factor(month) unsure what double parameters - choose factor version to avoid collinearity
 m1 <- lm(count ~ temp_mean + as.numeric(weekend) + trend + 
            factor(month) + factor(dow), data = train)
-m2 <- lm(count ~ temp_mean + weekend + month + trend + factor(month) + factor(dow) + I(temp_mean^2), data = train)
+m2 <- lm(count ~ I(temp_mean^2) + as.numeric(weekend) + trend + 
+           factor(month) + factor(dow), data = train )
 #m3 <- lm()
 
 
