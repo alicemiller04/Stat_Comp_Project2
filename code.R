@@ -10,7 +10,7 @@
 # 0. Packages
 library(ggplot2); library(dplyr); library(tidyr)
 library(lubridate); library(knitr); library(kableExtra)
-library(patchwork); library(broom)
+library(patchwork); library(broom); library(gridExtra)
 
 # 1. Load data
 load('cycle_daily_df.Rdata')
