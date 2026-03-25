@@ -80,7 +80,8 @@ plot_dow <- ggplot(cycle_daily_df, aes(x = dow, y = count)) +
 # Scatter plot of count vs mean temperature
 plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   geom_point(alpha = 0.3) + # alpha changes the opaqueness of the points
-  geom_smooth(method = "lm", color = "red", se = TRUE) +
+  geom_smooth(method = "lm", color = "red", se = TRUE)+
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2), color = "blue") +
   labs(
     title = "Cycling Count vs. Mean Temperature",
     x = "Mean Daily Temperature (°C)",
@@ -114,19 +115,16 @@ m1_literal<- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month) +
 m1 <- lm(count ~ temp_mean + trend + factor(month) + factor(dow), 
          data = cycle_daily_df)
 
-m2 <- lm(count ~ I(temp_mean^2) + as.numeric(weekend) + trend + 
+m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
            factor(month) + factor(dow), data = cycle_daily_df )
 
+###m3 ideas 
 
-#m3 <- lm()
+m3_log <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
+                factor(month) + factor(dow), data = cycle_daily_df)
 
-
-
-#diagnostic plots for first 3 models  
-# 
-#  Residuals vs fitted and normal QQ diagnostic plots, side by side.
-#  Brief assessment: what does M0 get right and wrong? 
-#  What motivates M1?
+m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
+                factor(month) + factor(dow), data = cycle_daily_df)
 
 #m0
 

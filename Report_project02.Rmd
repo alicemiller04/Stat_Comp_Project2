@@ -145,12 +145,11 @@ For each model:
 
 ###mathematical expression
 
-Rational for m1 over m0:
+Rational for investigating m1 over m0:
+m1 has the granularity for the effect of different weekdays rather than mere weekend or non weekend effects.
+Changing 'month' to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
 
-M1 has the granularity for the effect of different weekdays rather than mere weekend or non weekend effects.
-Changing month to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
-
-We omit the weekend term and numerical version of month to avoid collinearity with their 'factor' versions and because covariate dow is collinear with weekend.
+We omit the weekend term and numerical version of month to avoid collinearity with their 'factor' versions and because the covariate dow is collinear with weekend.
 
 
 ```{r side by side comparison of M0 and M1}
@@ -164,35 +163,31 @@ The bottom right Q-Q plot looks slightly more aligned to the normal line at the 
 
 
 ## Model M2: Nonlinear temperature
-
-
-
-
-
+Observe from the temperature vs count scatter plot, there is some non linear relationship as we can see some curvature (blue line).
+Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
 
 
 ```{r}
 grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
-
-
-par(mfrow = c(2, 2))
-
-# M1 Diagnostics
-plot(m1, which = 1, main = "M1: Residuals vs Fitted")
-plot(m1, which = 2, main = "M1: Normal Q-Q")
-# M2 Diagnostics
-plot(m2, which = 1, main = "M2: Residuals vs Fitted")
-plot(m2, which = 2, main = "M2: Normal Q-Q")
-
-
-
-              
+           
 ```
-
-
+M2 shows a general allignment with linear modelling assumptions - 
+no big violations.
+Observe that both models look almost identical from the diagnostic plots, which indicates further comparison may be undertaken using the scores.
 
 
 ## Model M3: [your extension title]
+
+-----
+IDEATION:
+If your primary goal is to fix the plots you just showed me:
+
+Choose the Log-transform to fix the Q-Q plot (the outliers).
+
+Choose the Interaction or Temperature Range to fix the Residuals vs Fitted (the "wiggle").
+
+
+------
 
 # Evaluation
 ## Statistical Performance
