@@ -444,11 +444,11 @@ M2_Tmean <-lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend +
                 
                 factor(month) + factor(dow), data = train )
 
-M2_Tmin <- lm(count ~ temp_min + I(temp_mean^2) + as.numeric(weekend) + trend + 
+M2_Tmin <- lm(count ~ temp_mean + I(temp_min^2) + as.numeric(weekend) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
-M2_Tmax <- lm(count ~ temp_max + I(temp_mean^2) + as.numeric(weekend) + trend + 
+M2_Tmax <- lm(count ~ temp_mean + I(temp_max^2) + as.numeric(weekend) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
@@ -465,6 +465,22 @@ m2_comparison <- bind_rows(
   "Temp Min"  = m2_scores(M2_Tmin, test),
   "Temp Max"  = m2_scores(M2_Tmax, test),
   .id = "Model")
+
+# estimated marginal effect
+# Extract the coefficients
+# b1 is the linear slope, b2 is the curvature coefficient
+b1 <- coef(M2_Tmax)["temp_mean"]
+b2 <- coef(M2_Tmax)["I(temp_max^2)"]
+
+# Calculate the Slope at 5C and 15C
+# Formula: Slope = b1 + (2 * b2 * Temperature)
+increase_5  <- b1 + (2 * b2 * 5)
+increase_15 <- b1 + (2 * b2 * 15)
+
+# 3. Round these for easy reading in your sentence
+val_5  <- round(increase_5, 0)
+val_15 <- round(increase_15, 0)
+
 
 # 6. CV by Month 
 # ...

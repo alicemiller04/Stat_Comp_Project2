@@ -239,7 +239,9 @@ knitr::kable(m2_comparison,
              caption = "Model M2 fitted with daily temp mean, temp min, temp max.")
 ```
 
-The model with ... has the best predictive performance because...
+The model with temp max in the nonlinear term has the best predictive performance because it has the lowest value for each score.
+
+
 
 # Discussion and limitations
 
