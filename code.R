@@ -139,8 +139,8 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend +
 
 ###m3 ideas 
 
-m3_log <- lm(log(count+1) ~ temp_mean + temp_mean:is_summer + I(temp_mean^2) + as.numeric(weekend) + trend + 
-                factor(month) + factor(dow) + is_covid, data = cycle_daily_df)
+m3_log <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + 
+               factor(month) +factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
 
 m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
                 factor(month) + factor(dow), data = cycle_daily_df)
@@ -217,10 +217,8 @@ p2_m2 <- ggplot(m2_diag, aes(sample = .resid)) +
 
 #m3
 # Add residuals and fitted values to the dataframe.
-m3_log <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + 
-               factor(month) +factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
+
 m3_diag <- augment(m3_log)
-summary(m3_log)
 
 # Residuals vs Fitted for M3
 p1_m3 <- ggplot(m3_diag, aes(x = .fitted, y = .resid)) +
