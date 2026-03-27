@@ -278,7 +278,7 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
   m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend, 
-  m2 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend, 
+  m2 = count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + factor(month) + factor(dow), 
   m3 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend)
 
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
