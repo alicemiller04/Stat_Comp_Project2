@@ -426,5 +426,43 @@ table3_final <- data.frame(
 
 print(table3_final)
 
+# 5.1 
+
+# test and train
+n = 2192 
+set.seed(1234)
+
+idx <- sample(1:n, size = round(0.7 * n))
+
+# Define the two datasets
+train <- cycle_daily_df[idx, ] 
+test  <- cycle_daily_df[-idx, ] 
+
+M2_Tmean <-lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
+                
+                factor(month) + factor(dow), data = train )
+
+M2_Tmin <- lm(count ~ temp_min + I(temp_mean^2) + as.numeric(weekend) + trend + 
+                
+                factor(month) + factor(dow), data = train )
+
+M2_Tmax <- lm(count ~ temp_max + I(temp_mean^2) + as.numeric(weekend) + trend + 
+                
+                factor(month) + factor(dow), data = train )
+
+m2_scores <- function(model, data = test) {
+  mu <- predict(model, data = test)
+  se <- predict(model,data = test, se.fit = TRUE)$se.fit
+  sigma <- sqrt(summary(model)$sigma^2 + se^2)
+  calc_scores(y = test$count, mu = mu, sigma = sigma)
+}
+
+# table
+m2_comparison <- bind_rows(
+  "Temp Mean" = m2_scores(M2_Tmean, test),
+  "Temp Min"  = m2_scores(M2_Tmin, test),
+  "Temp Max"  = m2_scores(M2_Tmax, test),
+  .id = "Model")
+
 # 6. CV by Month 
 # ...
