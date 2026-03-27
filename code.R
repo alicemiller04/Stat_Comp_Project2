@@ -41,7 +41,10 @@ cycle_daily_df <- cycle_daily_df %>%
     is_holiday = ifelse(m_num == 12 & day(date) >=24 & day(date)<=31, 1,0),
     
     #Daily temp range
-    temp_range = temp_max - temp_min) %>%
+    temp_range = temp_max - temp_min,
+    
+    #cold indicator
+    is_freezing = ifelse(temp_min <= 0, 1, 0))%>%
   
   mutate(
     
@@ -51,7 +54,7 @@ cycle_daily_df <- cycle_daily_df %>%
                     labels = month.abb, 
                     ordered = TRUE)
     
-    ) 
+    )
 
 # 2.2 exploratory plots
 
@@ -139,12 +142,12 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend +
 
 ###m3 ideas 
 
-m3_log <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + 
-               factor(month) +factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
+m3_log <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_max^2) + trend + 
+               factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
 
 m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
                 factor(month) + factor(dow), data = cycle_daily_df)
-
+summary(m3_log)
 #m0
 # Add residuals and fitted values to the dataframe.
 m0_diag <- augment(m0)
@@ -217,7 +220,6 @@ p2_m2 <- ggplot(m2_diag, aes(sample = .resid)) +
 
 #m3
 # Add residuals and fitted values to the dataframe.
-
 m3_diag <- augment(m3_log)
 
 # Residuals vs Fitted for M3
@@ -229,7 +231,7 @@ p1_m3 <- ggplot(m3_diag, aes(x = .fitted, y = .resid)) +
        x = "Fitted Values",
        y = "Residuals") +
   theme_minimal()
-
+p1_m3
 # Normal Q-Q Plot for M3
 p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
   stat_qq(alpha = 0.4) +
@@ -239,7 +241,7 @@ p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
        y = "Sample Quantiles") +
   theme_minimal()
 p2_m3
-
+summary(m3_log)
 
 # 4. Cross-Validation Functions
 
