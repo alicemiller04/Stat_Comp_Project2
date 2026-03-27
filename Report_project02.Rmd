@@ -246,7 +246,9 @@ At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 108 add
 At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 166 additional cyclists.
 
 
+###5.2 Seasonal Prediction Accuracy
 
+Analysis of the monthly RMSE and deviance statistics for each month, the model performs most reliably for June and July, while has the highest errors in March and April. This suggests that cycling count is more stable and weather-dependent during the summer months.The poor performance in Spring likely comes from the high variability in weather and daily fluctuations. One limitation of the dataset is the absence of further weather data such as rainfall and wind speed. Incorporating these variables into the model would likely increase the predictive power of the model and allow the model to account for the weather variations that lead to drops in cyclist numbers in Spring.
 
 # Discussion and limitations
 
