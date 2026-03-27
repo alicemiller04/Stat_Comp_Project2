@@ -212,6 +212,15 @@ knitr::kable(table1_final,
              caption = "Table of the Leave-one-year-out CV scores")
 ```
 
+Table of the RMSE and DS by month
+
+```{r Table 2 of the RMSE and DS by month}
+
+knitr::kable(table2_final, 
+             digits = 2, 
+             caption = "Table of the RMSE and DS by months")
+```
+
 ## Practical Performance
 
 <!--
