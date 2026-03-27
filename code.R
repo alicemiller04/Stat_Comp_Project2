@@ -16,8 +16,6 @@ library(patchwork); library(broom); library(gridExtra)
 load('cycle_daily_df.Rdata')
 
 # 2.1 Data Wrangling 
-head(cycle_daily_df)
-
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
     
@@ -37,7 +35,10 @@ cycle_daily_df <- cycle_daily_df %>%
     trend = as.numeric(date - date[1], units = "days"),
     
     #Covid indicator
-    is_covid = ifelse(year %in% 2020:2021,1,0),
+    is_covid = ifelse(date >= "2020-03-23" & date <= "2021-03-31",1,0),
+    
+    #Christmas holiday indicator
+    is_holiday = ifelse(m_num == 12 & day(date) >=24 & day(date)<=31, 1,0),
     
     #Daily temp range
     temp_range = temp_max - temp_min) %>%
@@ -45,7 +46,7 @@ cycle_daily_df <- cycle_daily_df %>%
   mutate(
     
     # Task 1: month as ordered factor for plots/inference
-    month = factor(month,
+    month = factor(m_num,
                     levels = 1:12,    
                     labels = month.abb, 
                     ordered = TRUE)
@@ -214,8 +215,32 @@ p2_m2 <- ggplot(m2_diag, aes(sample = .resid)) +
        y = "Sample Quantiles") +
   theme_minimal()
 
+#m3
+# Add residuals and fitted values to the dataframe.
+m3_log <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + 
+               factor(month) +factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
+m3_diag <- augment(m3_log)
+summary(m3_log)
 
+# Residuals vs Fitted for M3
+p1_m3 <- ggplot(m3_diag, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.4) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +
+  labs(title = "M3: Residuals vs Fitted",
+       x = "Fitted Values",
+       y = "Residuals") +
+  theme_minimal()
 
+# Normal Q-Q Plot for M3
+p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
+  stat_qq(alpha = 0.4) +
+  stat_qq_line(color = "red") +
+  labs(title = "M3: Normal Q-Q Plot",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
+p2_m3
 
 
 # 4. Cross-Validation Functions
@@ -296,7 +321,7 @@ models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
   m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend, 
   m2 = count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + factor(month) + factor(dow), 
-  m3 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend)
+  m3 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend) #change to reflect real model 3
 
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
 cycle_daily_df$year <- year(cycle_daily_df$date)
