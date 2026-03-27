@@ -16,22 +16,40 @@ library(patchwork); library(broom); library(gridExtra)
 load('cycle_daily_df.Rdata')
 
 # 2.1 Data Wrangling 
+head(cycle_daily_df)
 
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
+    
+    #Season indicator
+    m_num = month(date),
+    is_spring = ifelse(m_num %in% 3:5, 1, 0),
+    is_summer = ifelse(m_num %in% 6:8, 1, 0),
+    is_autumn = ifelse(m_num %in% 9:11, 1, 0),
+    is_winter = ifelse(m_num %in% c(12, 1, 2), 1, 0),
+    
+    # Task 2: dow with explicit levels 
+    dow = factor(dow,
+                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
+                 ordered = TRUE),
+    
+    # Task 3: trend as integer days since 2020-01-01
+    trend = as.numeric(date - date[1], units = "days"),
+    
+    #Covid indicator
+    is_covid = ifelse(year %in% 2020:2021,1,0),
+    
+    #Daily temp range
+    temp_range = temp_max - temp_min) %>%
+  
+  mutate(
+    
     # Task 1: month as ordered factor for plots/inference
     month = factor(month,
                     levels = 1:12,    
                     labels = month.abb, 
-                    ordered = TRUE),
+                    ordered = TRUE)
     
-    # Task 2: dow with explicit levels 
-    dow = factor(dow,
-                levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
-                ordered = TRUE),
-    
-    # Task 3: trend as integer days since 2020-01-01
-    trend = as.numeric(date - date[1], units = "days")
     ) 
 
 # 2.2 exploratory plots
@@ -120,14 +138,13 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend +
 
 ###m3 ideas 
 
-m3_log <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
-                factor(month) + factor(dow), data = cycle_daily_df)
+m3_log <- lm(log(count+1) ~ temp_mean + temp_mean:is_summer + I(temp_mean^2) + as.numeric(weekend) + trend + 
+                factor(month) + factor(dow) + is_covid, data = cycle_daily_df)
 
 m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
                 factor(month) + factor(dow), data = cycle_daily_df)
 
 #m0
-
 # Add residuals and fitted values to the dataframe.
 m0_diag <- augment(m0)
 
