@@ -37,7 +37,7 @@ cycle_daily_df <- cycle_daily_df %>%
     #Covid indicator
     is_covid = ifelse(date >= "2020-03-23" & date <= "2021-03-31",1,0),
     
-    #Christmas holiday indicator
+    #festive period indicator
     is_holiday = ifelse(m_num == 12 & day(date) >=24 & day(date)<=31, 1,0),
     
     #Daily temp range
@@ -142,12 +142,12 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend +
 
 ###m3 ideas 
 
-m3_log <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_max^2) + trend + 
+m3 <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_max^2) + trend + 
                factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
 
 m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
                 factor(month) + factor(dow), data = cycle_daily_df)
-summary(m3_log)
+
 #m0
 # Add residuals and fitted values to the dataframe.
 m0_diag <- augment(m0)
@@ -220,7 +220,7 @@ p2_m2 <- ggplot(m2_diag, aes(sample = .resid)) +
 
 #m3
 # Add residuals and fitted values to the dataframe.
-m3_diag <- augment(m3_log)
+m3_diag <- augment(m3)
 
 # Residuals vs Fitted for M3
 p1_m3 <- ggplot(m3_diag, aes(x = .fitted, y = .resid)) +
@@ -241,7 +241,7 @@ p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
        y = "Sample Quantiles") +
   theme_minimal()
 p2_m3
-summary(m3_log)
+
 
 # 4. Cross-Validation Functions
 
@@ -321,7 +321,7 @@ models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
   m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend, 
   m2 = count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + factor(month) + factor(dow), 
-  m3 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend) #change to reflect real model 3
+  m3 = count~ temp_mean:is_summer + I(temp_max^2) + trend + factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday)
 
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
 cycle_daily_df$year <- year(cycle_daily_df$date)
@@ -360,7 +360,6 @@ all_cv_results <- bind_rows(table1_results)
 table1_final <- all_cv_results %>%
   group_by(Model) %>%
   summarise(across(c(RMSE, MAE, DS, IS), mean))
-table1_final
 
 
 #Table 2, CV RMSE and DS by month for final model 
@@ -399,7 +398,6 @@ table2_final <- bind_rows(table2_results) %>%
     DS = round(DS, 2)
   )
 
-table2_final
 
 #table 3 - trend coefficients from M1 - M3
 
@@ -426,7 +424,6 @@ table3_final <- data.frame(
     `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
   )
 
-print(table3_final)
 
 # 5.1 
 
