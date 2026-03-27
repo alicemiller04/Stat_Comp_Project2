@@ -3,12 +3,12 @@ title: 'Project 2: Modelling daily cycling demand in Edinburgh'
 author: 'Group members: Alice Miller, Saba Sitter, Jake Saunders'
 date: 'Word count: [XXX words]'
 output:
-  html_document:
-    df_print: paged
   pdf_document:
     number_sections: true
     fig_caption: true
     latex_engine: xelatex
+  html_document:
+    df_print: paged
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{float}
@@ -123,9 +123,12 @@ This indicates the model is particularly bad at predicting high count observatio
 
 # Observe the high influence points 953 823, 1806
 
-```{r}
+```{r influential_rows}
 influential_rows <- cycle_daily_df[c(953, 823, 1806), ]
-influential_rows
+
+knitr::kable(influential_rows, 
+             digits = 2, 
+             caption = "The rows of the high influence points (953 823, 1806), from the cycle daily dataframe.")
 ```
 
 The highest influence date is potentially from the London, 
@@ -199,6 +202,15 @@ Required content:
   3. Discussion: do the scores agree on which model is best? 
      If not, explain why and state your final model choice explicitly.
 -->
+
+Table of the Leave-one-year-out CV scores.
+
+```{r Table 1 LOYO CV scores for M0-M3}
+
+knitr::kable(influential_rows, 
+             digits = 2, 
+             caption = "The rows of the high influence points (953 823, 1806), from the cycle daily dataframe.")
+```
 
 ## Practical Performance
 
