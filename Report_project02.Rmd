@@ -243,9 +243,19 @@ The model with temp max in the nonlinear term has the best predictive performanc
 
 At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 108 additional cyclists.
 
-At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 166 additional cyclists.
+At $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 166 additional cyclists.
 
+We can see the effects a $1 ^\circ$ increase has in Spring and winter specifically. 
 
+On a Spring day at $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 343 additional cyclists.
+
+On a Spring day at $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 424 additional cyclists.
+
+On a Winters day at $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 56 additional cyclists.
+
+On a Winters day at $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 137 additional cyclists.
+
+As we can see, there is huge variablity between seasons. For transport planning this implies that looking at the range of temperatures for the day is more importantas it will have a bigger effect. 
 
 
 # Discussion and limitations
