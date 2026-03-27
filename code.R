@@ -142,12 +142,11 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend +
 
 ###m3 ideas 
 
-m3 <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_max^2) + trend + 
-               factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
+m3 <- lm(log(count+1) ~ temp_max:is_summer + I(temp_max^2) + trend + 
+               factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday + temp_max + is_summer, data = cycle_daily_df)
 
 m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
                 factor(month) + factor(dow), data = cycle_daily_df)
-
 #m0
 # Add residuals and fitted values to the dataframe.
 m0_diag <- augment(m0)
@@ -321,7 +320,7 @@ models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
   m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend, 
   m2 = count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + factor(month) + factor(dow), 
-  m3 = count~ temp_mean:is_summer + I(temp_max^2) + trend + factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday)
+  m3 = log(count+1) ~ temp_max:is_summer + I(temp_max^2) + trend + factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday + temp_max + is_summer)
 
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
 cycle_daily_df$year <- year(cycle_daily_df$date)
@@ -346,6 +345,14 @@ for (y in years) {
     res_std_error <- summary(fit)$sigma
     sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
     
+    if (mod_name == "m3") { #transforming the log back
+      mu_3 <- exp(mu + 0.5 * sigma^2)- 1
+      sigma_3 <- (mu_3+1) * sqrt(exp(sigma^2) - 1)
+      mu <- mu_3
+      sigma<- sigma_3
+    }
+
+    
     # Run  calc_scores 
     scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma, model_name = mod_name)
     
@@ -360,7 +367,6 @@ all_cv_results <- bind_rows(table1_results)
 table1_final <- all_cv_results %>%
   group_by(Model) %>%
   summarise(across(c(RMSE, MAE, DS, IS), mean))
-
 
 #Table 2, CV RMSE and DS by month for final model 
 mbest = models_list$m3 
