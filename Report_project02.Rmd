@@ -241,6 +241,11 @@ knitr::kable(m2_comparison,
 
 The model with temp max in the nonlinear term has the best predictive performance because it has the lowest value for each score.
 
+At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 108 additional cyclists.
+
+At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 166 additional cyclists.
+
+
 
 
 # Discussion and limitations
