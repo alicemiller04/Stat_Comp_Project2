@@ -134,7 +134,7 @@ We omit the weekend term and numerical version of month to avoid collinearity wi
 
 
 ```{r side by side comparison of M0 and M1}
-grid.arrange(p_m0_1,p_m0_2,p_m1_1,,p2_m1_2, nrow = 2, ncol = 2)
+grid.arrange(p_m0_1,p_m0_2,p_m1_1,p_m1_2, nrow = 2, ncol = 2)
 grid.arrange(p_m0_3, p_m0_4, p_m1_3, p_m1_4, nrow = 2, ncol = 2)
 ```
 
