@@ -129,7 +129,6 @@ plot_december <-ggplot(december_trends, aes(x = day, y = avg_count)) +
        y = "Average Daily Cyclists") +
   theme_minimal()
 
-
 # 3. Model Fitting
 # Note: Use factor(month) in formulas for M1-M3
 m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), 
