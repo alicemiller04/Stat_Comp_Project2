@@ -127,11 +127,10 @@ For each model:
 
 # Model M1
 
-We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025. We switched month and day of week to factor variables, so each level gets its own intercept. 
+We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025.
 
 Our proposed equation for M1 is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \beta_k \text{month}_i + \beta_j \text{dow}_i +  \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2), k \in \{1,...,12 \}, j \in \{1,...,7 \} $$
-
 
 Rational for investigating m1 over m0:
 m1 has the granularity for the effect of different weekdays rather than mere weekend or non weekend effects.
@@ -141,41 +140,69 @@ We omit the weekend term and numerical version of month to avoid collinearity wi
 
 
 ```{r side by side comparison of M0 and M1}
-grid.arrange(p1_m0,p2_m0,p1_m1,p2_m1, nrow = 2, ncol = 2)
+grid.arrange(p_m0_1,p_m0_2,p_m1_2,,p2_m1, nrow = 2, ncol = 2)
+grid.arrange(p_m0_3, p_m0_4, p_m1_3, p_m1_4, nrow = 2, ncol = 2)
 ```
 
-Observe in the bottom left: the mean residual line follows a sigmoid shape, 
+Plot grid 1:
+Observe in the bottom left: the mean residual line follows a slight sigmoid shape, 
 suggesting the linear assumption is still violated for model 1.
-On a positive note, the 'n' pattern is less pronounced for model 1.
-The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0), which suggests the prediction for low count days is better.
+On a positive note, the 'n' pattern about the mean is less pronounced for model 1.
+The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0).This suggests the prediction for the low count days is better.
 
+Plot grid 2: 
+Observe the leverage and thus influence is larger for the outliers of m1.
 
 ## Model M2: Nonlinear temperature
 Observe from the temperature vs count scatter plot, there is some non linear relationship as we can see some curvature (blue line).
 Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
 
+```{r side by side comparison of M1 and M2}
+grid.arrange(p_m1_1, p_m1_2, p_m2_1, p_m2_2, nrow = 2, ncol = 2)
+grid.arrange(p_m1_3, p_m1_4, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
+```          
 
-```{r}
-grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
-           
-```
-M2 shows a general allignment with linear modelling assumptions - 
-no big violations.
-Observe that both models look almost identical from the diagnostic plots, which indicates further comparison may be undertaken using the scores.
+M2 shows a general alignment with linear modelling assumptions - there are
+no notable violations.
+Observe that both models look almost identical from the diagnostic plots, 
+which indicates further comparison may be undertaken using the scores.
+We observe the residuals vs leverage plot improves for m2;
+that is the leverage of the outliers decreases.
 
 
 ## Model M3: [your extension title]
 
------
-IDEATION:
-If your primary goal is to fix the plots you just showed me:
+Rationale for M3:
+To mediate the heavy right tailed QQ plots seen in (m0-2), we apply the log 
+transform to the count response.
 
-Choose the Log-transform to fix the Q-Q plot (the outliers).
+m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
+               factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
 
-Choose the Interaction or Temperature Range to fix the Residuals vs Fitted (the "wiggle").
+```{r M3 compared to M2}
+grid.arrange(p_m2_1, p_m2_2, p_m3_1, p_m3_2, nrow = 2, ncol = 2)
+grid.arrange(p_m2_3, p_m2_4, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
+```
+
+```{r improvements from adding is holiday variable to m3}
+
+library(ggplot2)
+
+# Visualization 1: Do holidays actually look different?
+ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Impact of Holidays on Daily Cycle Count",
+       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count")
+
+# Visualization 2: The COVID 'Step'
+ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "lm") +
+  labs(title = "Cycling Trends: Pre-Covid vs. Covid Era")
 
 
-------
+```
+
 
 # Evaluation
 ## Statistical Performance
