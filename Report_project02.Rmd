@@ -3,12 +3,12 @@ title: 'Project 2: Modelling daily cycling demand in Edinburgh'
 author: 'Group members: Alice Miller, Saba Sitter, Jake Saunders'
 date: 'Word count: [XXX words]'
 output:
+  html_document:
+    df_print: paged
   pdf_document:
     number_sections: true
     fig_caption: true
     latex_engine: xelatex
-  html_document:
-    df_print: paged
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{float}
@@ -134,7 +134,7 @@ We omit the weekend term and numerical version of month to avoid collinearity wi
 
 
 ```{r side by side comparison of M0 and M1}
-grid.arrange(p_m0_1,p_m0_2,p_m1_2,,p2_m1, nrow = 2, ncol = 2)
+grid.arrange(p_m0_1,p_m0_2,p_m1_1,,p2_m1_2, nrow = 2, ncol = 2)
 grid.arrange(p_m0_3, p_m0_4, p_m1_3, p_m1_4, nrow = 2, ncol = 2)
 ```
 
