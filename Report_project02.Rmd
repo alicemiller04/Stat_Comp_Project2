@@ -3,12 +3,12 @@ title: 'Project 2: Modelling daily cycling demand in Edinburgh'
 author: 'Group members: Alice Miller, Saba Sitter, Jake Saunders'
 date: 'Word count: [XXX words]'
 output:
-  html_document:
-    df_print: paged
   pdf_document:
     number_sections: true
     fig_caption: true
     latex_engine: xelatex
+  html_document:
+    df_print: paged
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{float}
@@ -76,8 +76,9 @@ There is a visible positive correlation between temperature mean and daily cycli
 
 We noticed dips in cyclist numbers between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created the following graph to illustrate this over the course of the 5 years. 
 
-```{r plot showing december, fig.cap="Daily cyclist count vs mean temperature"}
+```{r plot december, fig.cap="Line Graph of average daily cyclists in decemeber"}
 plot_december
+
 ```
 
 Clearly, there is a substantial decrease in cyclist numbers between the specified days. This led us to add whether a day falls between the 24th and 31st of December in our final model as 'is_holiday'.
@@ -90,8 +91,8 @@ We fit an initial model, M0, that uses the mean temperature, along with the mont
 
 The equation for M0 is:
 
-#$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$
-#$$\epsilon_i \sim N(0, \sigma^2)$$
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$
+$$\epsilon_i \sim N(0, \sigma^2)$$
 
 The following table shows the summary statistics for M0:
 
@@ -123,7 +124,7 @@ This indicates the model is particularly bad at predicting high count observatio
 We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025.
 
 Our proposed equation for M1 (identifiable form) is:
-$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
@@ -151,7 +152,7 @@ Observe the leverage and thus influence is larger for the outliers of m1.
 
 ## Model M2: Nonlinear temperature
 Our proposed equation for M2 (identifiable form) is:
-$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{temp_mean}^2_i + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{temp\_mean}^2_i + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
 From the temperature vs count scatter plot, we see there is an underlying some non linear relationship as we can see some curvature.

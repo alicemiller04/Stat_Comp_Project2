@@ -117,14 +117,12 @@ december_trends <- cycle_daily_df %>%
   filter(month(date) == 12) %>%
   mutate(day = day(date)) %>%
   group_by(day) %>%
-  summarise(avg_count = mean(count, na.rm = TRUE),
-            sd_count = sd(count, na.rm = TRUE))
+  summarise(avg_count = mean(count, na.rm = TRUE))
 
 # Create the plot
 plot_december <-ggplot(december_trends, aes(x = day, y = avg_count)) +
-  geom_line(size = 1) +
+  geom_line(linewidth = 1) +
   labs(title = "Average Cycling Demand in December",
-       subtitle = "Average daily counts across 2020-2024",
        x = "Day in December",
        y = "Average Daily Cyclists") +
   theme_minimal()
