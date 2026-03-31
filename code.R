@@ -308,12 +308,15 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 
 # 5. Leave-One-Year-Out CV Loop 
 # Define models in a list ###change formulas!!!
-models_list <- list(
-  m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
-  m1 = count~ temp_mean + I(temp_mean^2)  + trend + factor(month) + factor(dow), 
-  m2 = count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + factor(month) + factor(dow), 
-  m3 = log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday)
-
+models_list <- list(m0 = count ~temp_mean + as.numeric(weekend) +
+                      as.numeric(month),
+                    m1 = count~ temp_mean + I(temp_mean^2)  + trend + 
+                      factor(month) + factor(dow), 
+                    m2 = count ~ temp_mean + I(temp_mean^2) + 
+                      as.numeric(weekend) + trend + factor(month) + factor(dow), 
+                    m3 = log(count+1) ~ temp_mean + I(temp_mean^2) + 
+                      trend + factor(month) + factor(dow)  + is_covid  + is_holiday)
+ 
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
 cycle_daily_df$year <- year(cycle_daily_df$date)
 years <- sort(unique(cycle_daily_df$year))
