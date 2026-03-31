@@ -137,7 +137,7 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend +
            factor(month) + factor(dow), data = cycle_daily_df )
 
 m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
-               factor(month) + factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
+               factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
 
 #m0
 # Add residuals and fitted values to the dataframe.
