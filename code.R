@@ -146,104 +146,60 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend +
 m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
                factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
 
-#m0
-# Add residuals and fitted values to the dataframe.
-m0_diag <- augment(m0)
 
-# Plot Residuals vs Fitted for m0
-p1_m0 <- ggplot(m0_diag, aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.5) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  geom_smooth(method = "loess", se = FALSE, color = "blue") +
-  labs(title = "Residuals vs Fitted",
-       x = "Fitted Values",
-       y = "Residuals") +
-  theme_minimal()
+# ggplots for models:
 
-# Plot Normal Q-Q for m0
-p2_m0 <- ggplot(m0_diag, aes(sample = .resid)) +
-  stat_qq(alpha = 0.5) +
-  stat_qq_line(color = "red") +
-  labs(title = "Normal Q-Q Plot",
-       x = "Theoretical Quantiles",
-       y = "Sample Quantiles") +
-  theme_minimal()
-
-# m1 
-# Add residuals and fitted values to the dataframe.
-m1_diag <- augment(m1)
-
-# Residuals vs Fitted for M1
-p1_m1 <- ggplot(m1_diag, aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.4) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  geom_smooth(method = "loess", se = FALSE, color = "blue") +
-  labs(title = "M1: Residuals vs Fitted",
-       x = "Fitted Values",
-       y = "Residuals") +
-  theme_minimal()
-
-# Normal Q-Q Plot for M1
-p2_m1 <- ggplot(m1_diag, aes(sample = .resid)) +
-  stat_qq(alpha = 0.4) +
-  stat_qq_line(color = "red") +
-  labs(title = "M1: Normal Q-Q Plot",
-       x = "Theoretical Quantiles",
-       y = "Sample Quantiles") +
-  theme_minimal()
+m0_fort <- fortify(m0)
+m1_fort <- fortify(m1)
+m2_fort <- fortify(m2)
+m3_fort <- fortify(m3)
 
 
-#m2
-# Add residuals and fitted values to the dataframe.
-m2_diag <- augment(m2)
+# Helper function to mimic Base R's plot(lm)
+gg_diagnostic <- function(model_fort, type = 1, mod_name = "") {
+  if (type == 1) { # Residuals vs Fitted
+    ggplot(model_fort, aes(.fitted, .resid)) +
+      geom_point(alpha = 0.5) +
+      geom_smooth(se = FALSE, color = "red", method = "loess") +
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      labs(title = paste(mod_name, "Residuals vs Fitted"), x = "Fitted values", y = "Residuals")
+  } else if (type == 2) { # Normal Q-Q
+    ggplot(model_fort, aes(sample = .stdresid)) +
+      stat_qq() + stat_qq_line(color = "red") +
+      labs(title = paste(mod_name, "Normal Q-Q"), x = "Theoretical Quantiles", y = "Standardized Residuals")
+  } else if (type == 3) { # Scale-Location
+    ggplot(model_fort, aes(.fitted, sqrt(abs(.stdresid)))) +
+      geom_point(alpha = 0.5) +
+      geom_smooth(se = FALSE, color = "red", method = "loess") +
+      labs(title = paste(mod_name, "Scale-Location"), x = "Fitted values", y = expression(sqrt("|Standardized residuals|")))
+  } else if (type == 4) { # Residuals vs Leverage
+    ggplot(model_fort, aes(.hat, .stdresid)) +
+      geom_point(alpha = 0.5) +
+      geom_smooth(se = FALSE, color = "red", method = "loess") +
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      labs(title = paste(mod_name, "Residuals vs Leverage"), x = "Leverage", y = "Standardized Residuals")
+  } + theme_bw()
+}
 
-# Residuals vs Fitted for M2
-p1_m2 <- ggplot(m2_diag, aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.4) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  geom_smooth(method = "loess", se = FALSE, color = "blue") +
-  labs(title = "M2: Residuals vs Fitted",
-       x = "Fitted Values",
-       y = "Residuals") +
-  theme_minimal()
+p_m0_1 <- gg_diagnostic(m0_fort, 1, "m0")
+p_m1_1 <- gg_diagnostic(m1_fort, 1, "m1")
+p_m2_1 <- gg_diagnostic(m2_fort, 1, "m2")
+p_m3_1 <- gg_diagnostic(m3_fort, 1, "m3")
 
-# Normal Q-Q Plot for M2
-p2_m2 <- ggplot(m2_diag, aes(sample = .resid)) +
-  stat_qq(alpha = 0.4) +
-  stat_qq_line(color = "red") +
-  labs(title = "M2: Normal Q-Q Plot",
-       x = "Theoretical Quantiles",
-       y = "Sample Quantiles") +
-  theme_minimal()
+p_m0_2 <- gg_diagnostic(m0_fort, 2, "m0")
+p_m1_2 <- gg_diagnostic(m1_fort, 2, "m1")
+p_m2_2 <- gg_diagnostic(m2_fort, 2, "m2")
+p_m3_2 <- gg_diagnostic(m3_fort, 2, "m3")
 
-#m3
-# Add residuals and fitted values to the dataframe.
-m3_diag <- augment(m3)
+p_m0_3 <- gg_diagnostic(m0_fort, 3, "m0")
+p_m1_3 <- gg_diagnostic(m1_fort, 3, "m1")
+p_m2_3 <- gg_diagnostic(m2_fort, 3, "m2")
+p_m3_3<- gg_diagnostic(m3_fort, 3, "m3")
 
-# Residuals vs Fitted for M3
-p1_m3 <- ggplot(m3_diag, aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.4) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  geom_smooth(method = "loess", se = FALSE, color = "blue") +
-  labs(title = "M3: Residuals vs Fitted",
-       x = "Fitted Values",
-       y = "Residuals") +
-  theme_minimal()
-p1_m3
-# Normal Q-Q Plot for M3
-p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
-  stat_qq(alpha = 0.4) +
-  stat_qq_line(color = "red") +
-  labs(title = "M3: Normal Q-Q Plot",
-       x = "Theoretical Quantiles",
-       y = "Sample Quantiles") +
-  theme_minimal()
-p2_m3
-
-
-
-
-# 4. Cross-Validation Functions
+p_m0_4<- gg_diagnostic(m0_fort, 4, "m0")
+p_m1_4 <- gg_diagnostic(m1_fort, 4, "m1")
+p_m2_4 <- gg_diagnostic(m2_fort, 4, "m2")
+p_m3_4<- gg_diagnostic(m3_fort, 4, "m3")
 
 # 4. Cross-Validation Functions
 
