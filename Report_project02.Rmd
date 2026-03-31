@@ -107,8 +107,6 @@ We then assessed the diagnostic plots for M0.
 
 ```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0"}
 grid.arrange(p_m0_1,p_m0_2, ncol = 2)
-plot(m0, which = 4)
-
 ```
 The Normal
 
@@ -158,7 +156,6 @@ grid.arrange(p_m1_1, p_m1_2, p_m2_1, p_m2_2, nrow = 2, ncol = 2)
 grid.arrange(p_m1_3, p_m1_4, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
 ```          
 
-<<<<<<< HEAD
 ```{r thing}
 grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
            
@@ -177,6 +174,7 @@ that is the leverage of the outliers decreases.
 
 
 ## Model M3: [your extension title]
+The expression is
 
 Rationale for M3:
 To mediate the heavy right tailed QQ plots seen in (m0-2), we apply the log 
