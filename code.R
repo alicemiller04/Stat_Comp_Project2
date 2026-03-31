@@ -111,15 +111,23 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   ) +
   theme_minimal()
 
-##non trivial plot 
-plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = factor(weekend))) +
-  geom_boxplot(outlier.shape = NA, alpha = 0.7) + # Clean boxes for the "average"
-  theme_minimal() +
-  scale_fill_manual(values = c("0" = "#56B4E9", "1" = "#E69F00"), 
-                    labels = c("Weekday", "Weekend"), name = "Day Type") +
-  labs(title = "Distribution of Daily Cycle Counts by Month and Day Type",
-       x = "Month", 
-       y = "Number of Cyclists")
+# non trivial plot - festive period
+# Filter for December and calculate the average count for each day across all years
+december_trends <- cycle_daily_df %>%
+  filter(month(date) == 12) %>%
+  mutate(day = day(date)) %>%
+  group_by(day) %>%
+  summarise(avg_count = mean(count, na.rm = TRUE),
+            sd_count = sd(count, na.rm = TRUE))
+
+# Create the plot
+plot_decemeber <-ggplot(december_trends, aes(x = day, y = avg_count)) +
+  geom_line(size = 1) +
+  labs(title = "Average Cycling Demand in December",
+       subtitle = "Average daily counts across 2020-2024",
+       x = "Day in December",
+       y = "Average Daily Cyclists") +
+  theme_minimal()
 
 
 # 3. Model Fitting
@@ -232,6 +240,8 @@ p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
        y = "Sample Quantiles") +
   theme_minimal()
 p2_m3
+
+
 
 
 # 4. Cross-Validation Functions
@@ -432,7 +442,7 @@ table3_final <- data.frame(
 # 5.1 
 
 # test and train
-n = 2192 
+n = nrow(cycle_daily_df)
 set.seed(1234)
 
 idx <- sample(1:n, size = round(0.7 * n))
