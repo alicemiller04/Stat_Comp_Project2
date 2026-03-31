@@ -118,22 +118,6 @@ The QQ plot demonstrates right skewing and heavy tail in the positive quantiles 
   thus the normality assumption for linear regression is violated.
 This indicates the model is particularly bad at predicting high count observations.
 
-# Observe the high influence points 953 823, 1806
-
-```{r influential_rows}
-influential_rows <- cycle_daily_df[c(953, 823, 1806), ]
-
-knitr::kable(influential_rows, 
-             digits = 2, 
-             caption = "The rows of the high influence points (953 823, 1806), from the cycle daily dataframe.")
-```
-
-The highest influence date is potentially from the London, 
-Edinburgh cycling festival and fringe combination.
-
-
-# Proposed models M1--M3
-
 <!--
 For each model:
   - State the model mathematically.
@@ -141,9 +125,13 @@ For each model:
   - Show diagnostic plots and comment on improvement over the previous model.
 -->
 
-## Model M1: Trend and factor 
+# Model M1
 
-###mathematical expression
+We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025. We switched month and day of week to factor variables, so each level gets its own intercept. 
+
+Our proposed equation for M1 is:
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \beta_k \text{month}_i + \beta_j \text{dow}_i +  \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2), k \in \{1,...,12 \}, j \in \{1,...,7 \} $$
+
 
 Rational for investigating m1 over m0:
 m1 has the granularity for the effect of different weekdays rather than mere weekend or non weekend effects.
