@@ -106,7 +106,7 @@ For every 1 degree increase in the mean daily temperature, the model predicts an
 We then assessed the diagnostic plots for M0. 
 
 ```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0"}
-grid.arrange(p1_m0,p2_m0, ncol = 2)
+grid.arrange(p_m0_1,p_m0_2, ncol = 2)
 plot(m0, which = 4)
 
 ```
@@ -119,12 +119,6 @@ The QQ plot demonstrates right skewing and heavy tail in the positive quantiles 
   thus the normality assumption for linear regression is violated.
 This indicates the model is particularly bad at predicting high count observations.
 
-<!--
-For each model:
-  - State the model mathematically.
-  - Justify every new term BEFORE showing results.
-  - Show diagnostic plots and comment on improvement over the previous model.
--->
 
 # Model M1
 
@@ -172,14 +166,14 @@ grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
 M2 shows a general allignment with linear modelling assumptions - 
 no big violations.
 Observe that both models look almost identical from the diagnostic plots, which indicates further comparison may be undertaken using the scores.
-=======
+
 M2 shows a general alignment with linear modelling assumptions - there are
 no notable violations.
 Observe that both models look almost identical from the diagnostic plots, 
 which indicates further comparison may be undertaken using the scores.
 We observe the residuals vs leverage plot improves for m2;
 that is the leverage of the outliers decreases.
->>>>>>> 6bb6874c0be6b306c2a5a99363a02f600b44baff
+
 
 
 ## Model M3: [your extension title]
