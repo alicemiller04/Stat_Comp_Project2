@@ -40,24 +40,24 @@ We initially found the summary statistics for the number of daily cyclists and t
 
 knitr::kable(summary_stats, 
              digits = 2, 
-             caption = "Summary Statistics for count, temp mean, temp min, temp max")
+             caption = "Summary Statistics for count, temp mean, temp min, temp max.")
 ```
 
-We can see that the number of daily cyclists varies from $1,264$ to $43,864$, a variation of $\approx 3370 \%$. Intuitively, one would think that a warmer average weather would lead to more cyclists. 
+We can see from table 1 that the number of daily cyclists varies from $1,264$ to $43,864$, a variation of $\approx 3370 \%$. Intuitively, one would think that a warmer average weather would lead to more cyclists. 
 
 We then plotted a time series of the daily cyclist count over the period of observations. 
 
-```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025"}
+```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025."}
 plot_timeseries
 ```
 
 
-We can see from Figure X that there are yearly fluctuations, with peaks and troughs occurring seasonally. Overall, the cyclist count seems to be decreasing over time. There is a visible peak on and surrounding the 10th of August 2022, which we investigated. We found that there was a London-Edinburgh-London bicycle event taking place over this period with over 2000 riders$^{1}$. Supposing each cyclist passed through multiple sensors over the course of the days, this likely explains the inflated numbers. 
+We can see from Figure 1 that there are yearly fluctuations, with peaks and troughs occurring seasonally. Overall, the cyclist count seems to be decreasing over time. There is a visible peak on and surrounding the 10th of August 2022, which we investigated. We found that there was a London-Edinburgh-London bicycle event taking place over this period with over 2000 riders$^{1}$. Supposing each cyclist passed through multiple sensors over the course of the days, this likely explains the inflated numbers. 
 
 We then created boxplots of the daily cyclist count by month and by the day of week to observe whether they had any significant impact on the number of daily cyclists. 
 
 
-```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week"}
+```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week."}
 grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 
@@ -66,17 +66,17 @@ We can see from Figure 2 that the colder months (October - February) have slight
 
 The second boxplot indicates that there tends to be less cyclists on Mondays and Sundays, with the other days appearing relatively constant. 
 
-We then plotted the daily cyclist count against the mean temperature, with red and blue lines indicating regression and quadratic relationship respectively. 
+We then plotted the daily cyclist count against the mean temperature, with red and blue lines indicating regression and quadratic relationship respectively as seen in figure 3. 
 
-```{r scatter plot of count vs temp_mean, fig.cap="Daily cyclist count vs mean temperature"}
+```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of Daily cyclist count vs mean temperature."}
 plot_temp_scatter
 ```
 
 There is a visible positive correlation between temperature mean and daily cyclist count, which was to be expected. There are less observations for the days with the lowest and highest mean temperatures, so there is not a clear trend that we can see for those days. There is a large variation in cyclist counts for days with the same temperature, so it is not feasible to predict counts based off of mean temperature alone.  
 
-We noticed dips in cyclist numbers between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created the following graph to illustrate this over the course of the 5 years. 
+We noticed dips in cyclist numbers between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created figure 4 to illustrate this over the course of the 5 years. 
 
-```{r plot december, fig.cap="Line Graph of average daily cyclists in decemeber"}
+```{r plot december, fig.cap="Line Graph of average daily cyclists across the 5 years in decemeber."}
 plot_december
 
 ```
@@ -94,21 +94,23 @@ The equation for M0 is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-The following table shows the summary statistics for M0:
+Table 2 shows the summary statistics for M0:
 
 ```{r summary for m0, echo=FALSE} 
 ##notice the p values all 0 because of rounding
 
 knitr::kable(summary(m0)$coefficients, 
-             caption = "Summary of M0")
+             digits = 2, # round all numbers to 2 s.f
+             caption = "Summary coefficients for model M0.")
 ```
 For every 1 degree increase in the mean daily temperature, the model predicts an increase of 247 cyclists per day, and predicts a 1247 decrease in cyclist count on weekends compared to weekdays. Since M0 uses month as a numeric predictor, it ignores the fact that cyclist counts generally increase in summer and fall in winter. Currently, the model suggests that there is a decrease of 247 cyclists for each month passing.
 
-We then assessed the diagnostic plots for M0. 
+We then assessed the diagnostic plots for M0, which can be seen in figure 5.
 
-```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0"}
+```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0."}
 grid.arrange(p_m0_1,p_m0_2, ncol = 2)
 ```
+
 The Normal
 
 Model 0 (m0) shows a mean variance of 0, independent of the fitted values.
@@ -137,12 +139,13 @@ Changing 'month' to a factor variable allows for building a seasonal profile rat
 We omit the weekend term and numerical version of 'month' to avoid collinearity with their 'factor' versions and because the covariate 'dow' is collinear with 'weekend'.
 
 
-```{r side by side comparison of M0 and M1}
+```{r side by side comparison of M0 and M1, fig.cap="Diagnostic Plots for M0 and M1 in grid layout."}
 grid.arrange(p_m0_1,p_m0_2,p_m1_1,p_m1_2, nrow = 2, ncol = 2)
 grid.arrange(p_m0_3, p_m0_4, p_m1_3, p_m1_4, nrow = 2, ncol = 2)
 ```
+
 Plot grid 1:
-Observe in the bottom left, the mean residual line follows a slight sigmoid shape, 
+Observe in the bottom left of figure 6, the mean residual line follows a slight sigmoid shape, 
 suggesting the linear assumption is still violated for model 1.
 On a positive note, the 'n' pattern about the mean is less pronounced for model 1.
 The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0). This suggests the prediction for the low count days is better.
@@ -151,6 +154,7 @@ Plot grid 2:
 Observe the leverage and thus influence is larger for the outliers of m1.
 
 ## Model M2: Nonlinear temperature
+
 Our proposed equation for M2 (identifiable form) is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{temp\_mean}^2_i + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
@@ -158,10 +162,16 @@ $$\epsilon_i \sim N(0, \sigma^2)$$
 From the temperature vs count scatter plot, we see there is an underlying some non linear relationship as we can see some curvature.
 Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
 
-```{r side by side comparison of M1 and M2}
+```{r 1st_Diagnostics_of_M1_M2, fig.cap="Residuals vs Fitted and Normal Q−Q Diagnostic Plots for M1 and M2 in grid layout."}
 grid.arrange(p_m1_1, p_m1_2, p_m2_1, p_m2_2, nrow = 2, ncol = 2)
+```     
+
+
+```{r 2nd_Diagnostics_of_M1_M2, fig.cap="Scale−Location and Residuals vs Leverage Diagnostic Plots for M1 and M2 in grid layout."}
 grid.arrange(p_m1_3, p_m1_4, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
-```          
+``` 
+
+
 M2 shows a general alignment with linear modelling assumptions since there are
 no notable violations.
 Observe both models are almost identical from the diagnostic plots, 
@@ -170,6 +180,7 @@ The only noticeable change comes from the leverage of the outliers increasing sl
 
 
 ## Model M3: [your extension title]
+
 The expression is: 
 $$\log(count_i + 1) = \beta_0 + \beta_1 temp\_mean_i + \beta_2 temp\_mean_i^2 + \beta_3 trend_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(month_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(dow_i = k) + \beta_4 is\_covid_i + \beta_5 is\_holiday_i + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
@@ -178,21 +189,25 @@ To mediate the heavy right tailed QQ plots seen in (m0-2), we apply the log
 transform to the count response. We addd terms is_covid and is_summer ???
 
 
-```{r improvements from adding is holiday variable to m3}
+```{r improvements from adding is holiday variable to m3, fig.cap="Boxplot of Holiday variable (Dec 24th - 31st)."}
 
-library(ggplot2)
-
-# holiday variable
+# holiday boxplots
 ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
   geom_boxplot(fill = "lightblue") +
   labs(title = "Impact of Holidays on Daily Cycle Count",
-       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count")
+       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count") +
+  theme_minimal()
+
+```
+
+```{r improvements from adding is covid variable to m3, fig.cap="Trend Lines of cyclist counts with and without Covid variable."}
 
 # COVID variable
 ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
   geom_point(alpha = 0.3) +
   geom_smooth(method = "lm") +
-  labs(title = "Cycling Trends: Non Covid vs. Covid Era")
+  labs(title = "Cycling Trends: Non Covid vs. Covid Era") +
+  theme_minimal()
 
 ```
 
@@ -256,18 +271,6 @@ The model with temp max in the nonlinear term has the best predictive performanc
 At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 108 additional cyclists.
 
 At $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 166 additional cyclists.
-
-We can see the effects a $1 ^\circ$ increase has in Spring and winter specifically. 
-
-On a Spring day at $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 343 additional cyclists.
-
-On a Spring day at $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 424 additional cyclists.
-
-On a Winters day at $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 56 additional cyclists.
-
-On a Winters day at $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 137 additional cyclists.
-
-As we can see, there is huge variablity between seasons. For transport planning this implies that looking at the range of temperatures for the day is more importantas it will have a bigger effect. 
 
 
 # Discussion and limitations

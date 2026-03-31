@@ -159,22 +159,25 @@ gg_diagnostic <- function(model_fort, type = 1, mod_name = "") {
       geom_point(alpha = 0.5) +
       geom_smooth(se = FALSE, color = "red", method = "loess") +
       geom_hline(yintercept = 0, linetype = "dashed") +
-      labs(title = paste(mod_name, "Residuals vs Fitted"), x = "Fitted values", y = "Residuals")
+      labs(title = paste(mod_name, "Residuals vs Fitted"), x = "Fitted values", y = "Residuals") +
+      theme_bw()
   } else if (type == 2) { # Normal Q-Q
     ggplot(model_fort, aes(sample = .stdresid)) +
       stat_qq() + stat_qq_line(color = "red") +
-      labs(title = paste(mod_name, "Normal Q-Q"), x = "Theoretical Quantiles", y = "Standardized Residuals")
+      labs(title = paste(mod_name, "Normal Q-Q"), x = "Theoretical Quantiles", y = "Standardized Residuals") +
+      theme_bw()
   } else if (type == 3) { # Scale-Location
     ggplot(model_fort, aes(.fitted, sqrt(abs(.stdresid)))) +
       geom_point(alpha = 0.5) +
       geom_smooth(se = FALSE, color = "red", method = "loess") +
-      labs(title = paste(mod_name, "Scale-Location"), x = "Fitted values", y = expression(sqrt("|Standardized residuals|")))
+      labs(title = paste(mod_name, "Scale-Location"), x = "Fitted values", y = expression(sqrt("|Standardized residuals|"))) +
+      theme_bw()
   } else if (type == 4) { # Residuals vs Leverage
     ggplot(model_fort, aes(.hat, .stdresid)) +
       geom_point(alpha = 0.5) +
       geom_smooth(se = FALSE, color = "red", method = "loess") +
       geom_hline(yintercept = 0, linetype = "dashed") +
-      labs(title = paste(mod_name, "Residuals vs Leverage"), x = "Leverage", y = "Standardized Residuals")
+      labs(title = paste(mod_name, "Residuals vs Leverage"), x = "Leverage", y = "Standardized Residuals") 
   } + theme_bw()
 }
 
@@ -445,21 +448,4 @@ increase_15 <- b1 + (2 * b2 * 15)
 # 3. Round these for easy reading in your sentence
 val_5  <- round(increase_5, 0)
 val_15 <- round(increase_15, 0)
-
-# Fit M2 with seasonal interactions
-M2_interaction <- lm(count ~ temp_mean + (temp_mean : is_spring) + (temp_mean:is_winter) + 
-                       I(temp_max^2) + trend + factor(dow), data = train)
-
-# Extract Coefficients
-b_base   <- coef(M2_interaction)["temp_mean"]
-b_spring <- coef(M2_interaction)["temp_mean:is_spring"]
-b_winter <- coef(M2_interaction)["temp_mean:is_winter"]
-b_quad   <- coef(M2_interaction)["I(temp_max^2)"]
-
-# Calculate Marginal Effect at 5 degrees and 15 degress for both seasons
-# Formula: (Base + Season_Bonus) + (2 * Curvature * Temp)
-effect_spring_5 <- (b_base + b_spring) + (2 * b_quad * 5)
-effect_spring_15 <- (b_base + b_spring) + (2 * b_quad * 15)
-effect_winter_5 <- (b_base + b_winter) + (2 * b_quad * 5)
-effect_winter_15 <- (b_base + b_winter) + (2 * b_quad * 15)
 
