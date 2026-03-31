@@ -495,6 +495,7 @@ val_15 <- round(increase_15, 0)
 M2_interaction <- lm(count ~ temp_mean + (temp_mean : is_spring) + (temp_mean:is_winter) + 
                        I(temp_max^2) + trend + factor(dow), data = train)
 
+
 # Extract Coefficients
 b_base   <- coef(M2_interaction)["temp_mean"]
 b_spring <- coef(M2_interaction)["temp_mean:is_spring"]
