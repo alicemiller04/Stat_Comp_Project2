@@ -361,12 +361,14 @@ for (y in years) {
     
   }
 }
-table1_final
+
 #finding the average scores for each model and displaying
 all_cv_results <- bind_rows(table1_results)
 table1_final <- all_cv_results %>%
   group_by(Model) %>%
   summarise(across(c(RMSE, MAE, DS, IS), mean))
+
+table1_final
 
 #Table 2, CV RMSE and DS by month for final model 
 mbest = models_list$m3 
