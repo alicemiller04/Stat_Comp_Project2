@@ -137,11 +137,9 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend +
 
 ###m3 ideas 
 
-m3 <- lm(log(count+1) ~ temp_max:is_summer + I(temp_max^2) + trend + 
+m3 <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + 
                factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
 
-m3_sqrt <- lm(sqrt(count)~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
-                factor(month) + factor(dow), data = cycle_daily_df)
 #m0
 # Add residuals and fitted values to the dataframe.
 m0_diag <- augment(m0)
@@ -313,9 +311,9 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 # Define models in a list ###change formulas!!!
 models_list <- list(
   m0 = count ~temp_mean + as.numeric(weekend) + as.numeric(month),
-  m1 = count~ temp_mean + as.numeric(weekend) + as.numeric(month) + trend, 
+  m1 = count~ temp_mean + I(temp_mean^2)  + trend + factor(month) + factor(dow), 
   m2 = count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + factor(month) + factor(dow), 
-  m3 = log(count+1) ~ temp_mean*is_summer + I(temp_max^2) + trend + factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday)
+  m3 = log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday)
 
 cycle_daily_df$date <- as.Date(cycle_daily_df$date)
 cycle_daily_df$year <- year(cycle_daily_df$date)
