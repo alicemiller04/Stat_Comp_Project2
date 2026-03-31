@@ -121,7 +121,7 @@ december_trends <- cycle_daily_df %>%
             sd_count = sd(count, na.rm = TRUE))
 
 # Create the plot
-plot_decemeber <-ggplot(december_trends, aes(x = day, y = avg_count)) +
+plot_december <-ggplot(december_trends, aes(x = day, y = avg_count)) +
   geom_line(size = 1) +
   labs(title = "Average Cycling Demand in December",
        subtitle = "Average daily counts across 2020-2024",
@@ -509,5 +509,3 @@ effect_spring_15 <- (b_base + b_spring) + (2 * b_quad * 15)
 effect_winter_5 <- (b_base + b_winter) + (2 * b_quad * 5)
 effect_winter_15 <- (b_base + b_winter) + (2 * b_quad * 15)
 
-# 6. CV by Month 
-# ...
