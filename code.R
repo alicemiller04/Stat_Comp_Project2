@@ -111,15 +111,28 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   ) +
   theme_minimal()
 
-##non trivial plot 
-plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = factor(weekend))) +
-  geom_boxplot(outlier.shape = NA, alpha = 0.7) + # Clean boxes for the "average"
-  theme_minimal() +
-  scale_fill_manual(values = c("0" = "#56B4E9", "1" = "#E69F00"), 
-                    labels = c("Weekday", "Weekend"), name = "Day Type") +
-  labs(title = "Distribution of Daily Cycle Counts by Month and Day Type",
-       x = "Month", 
-       y = "Number of Cyclists")
+# non trivial plot - festive period
+# Filter for December and calculate the average count for each day across all years
+december_trends <- cycle_daily_df %>%
+  filter(month(date) == 12) %>%
+  mutate(day = day(date)) %>%
+  group_by(day) %>%
+  summarise(avg_count = mean(count, na.rm = TRUE),
+            sd_count = sd(count, na.rm = TRUE))
+
+# Create the plot
+plot_decemeber <-ggplot(december_trends, aes(x = day, y = avg_count)) +
+  geom_line(color = "darkblue", size = 1) +
+  geom_ribbon(aes(ymin = avg_count - sd_count, ymax = avg_count + sd_count), 
+              fill = "lightblue", alpha = 0.3) +
+  geom_vline(xintercept = 25, linetype = "dashed", color = "red") +
+  annotate("text", x = 26, y = max(december_trends$avg_count), 
+           label = "Christmas Day", color = "red", hjust = 0) +
+  labs(title = "The 'Festive Dip': Average Cycling Demand in December",
+       subtitle = "Aggregated daily counts across 2020-2024",
+       x = "Day of December",
+       y = "Average Daily Cyclists") +
+  theme_minimal()
 
 
 # 3. Model Fitting
@@ -232,6 +245,8 @@ p2_m3 <- ggplot(m3_diag, aes(sample = .resid)) +
        y = "Sample Quantiles") +
   theme_minimal()
 p2_m3
+
+
 
 
 # 4. Cross-Validation Functions
