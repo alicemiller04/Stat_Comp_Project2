@@ -371,30 +371,35 @@ table1_final <- all_cv_results %>%
 table1_final
 
 #Table 2, CV RMSE and DS by month for final model 
-mbest = models_list$m3 
 
-months_list <- month.name
+#fitting full models
+m1_full <- lm(models_list$m1, data = cycle_daily_df)
+m2_full <- lm(models_list$m2, data = cycle_daily_df)
+m3_full <- lm(models_list$m3, data = cycle_daily_df)
+
+mbest = m3_full
+
+months_list <- month.abb
 table2_results <- list()
 
 for (m in months_list){
   
   #extract one month to test 
-  train_data <- subset(cycle_daily_df, month(date, label = TRUE, abbr = FALSE) != m)
-  test_data  <- subset(cycle_daily_df, month(date, label = TRUE, abbr = FALSE) == m)
-  
-  # Fit the model on the remaining months
-  fit <- lm(mbest, data = train_data)
+  test_data <- subset(cycle_daily_df, month == m)
   
   # predict on the other month
-  pred_obj <- predict(fit, newdata = test_data, se.fit = TRUE)
+  pred_obj <- predict(mbest, newdata = test_data, se.fit = TRUE)
   
   # Calculate total predictive SD (sigma)
   # Combining residual variance and uncertainty in the mean
   res_std_error <- summary(fit)$sigma
-  sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
+  
+  #transform back
+  mu_back <- exp(pred_obj$fit) - 1
+  sigma_back <- mu_back * res_std_error
   
   # Run calc_scores
-  scores <- calc_scores(y = test_data$count, mu = pred_obj$fit, sigma = sigma, model_name = mod_name)
+  scores <- calc_scores(y = test_data$count, mu = mu_back, sigma = sigma_back, model_name = "m3")
   
   # Store result with identifiers
   table2_results[[m]] <- data.frame(Month = m, RMSE = scores$RMSE, DS = scores$DS)
@@ -409,10 +414,6 @@ table2_final <- bind_rows(table2_results) %>%
 
 #table 3 - trend coefficients from M1 - M3
 
-#fitting full models
-m1_full <- lm(models_list$m1, data = cycle_daily_df)
-m2_full <- lm(models_list$m2, data = cycle_daily_df)
-m3_full <- lm(models_list$m3, data = cycle_daily_df)
 # 
 # #getting the trend from each model
 tr1 <- coef(m1_full)[["trend"]]
