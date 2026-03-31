@@ -76,7 +76,7 @@ There is a visible positive correlation between temperature mean and daily cycli
 
 We noticed dips in cyclist numbers between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created the following graph to illustrate this over the course of the 5 years. 
 
-```{r plot showing december"}
+```{r plot showing december, fig.cap="Daily cyclist count vs mean temperature"}
 plot_december
 ```
 
@@ -90,7 +90,8 @@ We fit an initial model, M0, that uses the mean temperature, along with the mont
 
 The equation for M0 is:
 
-$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2)$$
+#$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$
+#$$\epsilon_i \sim N(0, \sigma^2)$$
 
 The following table shows the summary statistics for M0:
 
@@ -130,7 +131,8 @@ For each model:
 We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025. We switched month and day of week to factor variables, so each level gets its own intercept. 
 
 Our proposed equation for M1 is:
-$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \beta_k \text{month}_i + \beta_j \text{dow}_i +  \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2), k \in \{1,...,12 \}, j \in \{1,...,7 \} $$
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \beta_k \text{month}_i + \beta_j \text{dow}_i +  \epsilon_i$$ 
+$$\epsilon_i \sim N(0, \sigma^2), k \in \{1,...,12 \}, j \in \{1,...,7 \} $$
 
 
 Rational for investigating m1 over m0:
@@ -155,7 +157,7 @@ Observe from the temperature vs count scatter plot, there is some non linear rel
 Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
 
 
-```{r}
+```{r thing}
 grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
            
 ```
