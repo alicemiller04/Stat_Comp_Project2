@@ -446,15 +446,15 @@ idx <- sample(1:n, size = round(0.7 * n))
 train <- cycle_daily_df[idx, ] 
 test  <- cycle_daily_df[-idx, ] 
 
-M2_Tmean <-lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
+M2_Tmean <-lm(count ~ temp_mean + I(temp_mean^2) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
-M2_Tmin <- lm(count ~ temp_mean + I(temp_min^2) + as.numeric(weekend) + trend + 
+M2_Tmin <- lm(count ~ temp_mean + I(temp_min^2) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
-M2_Tmax <- lm(count ~ temp_mean + I(temp_max^2) + as.numeric(weekend) + trend + 
+M2_Tmax <- lm(count ~ temp_mean + I(temp_max^2) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
