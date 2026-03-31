@@ -27,14 +27,14 @@ source("code.R") # Runs all models and creates tables/plots in the background
 
 # Introduction
 
-The "cycle daily" dataset  consists of approximately 2,180 daily observations ranging from 2020 to 2025, sourced from Edinburgh's network of automatic cycling counters, along with local weather and temporal data. This data comes from sensors at specific locations across the city, so it's possible not every cyclist is accounted for. However, they are a good indicator of how cycling demand varies across different days and weather patterns. Edinburgh relies heavily on public transport for its residents and tourists to navigate the city. For future funding allocation and planning, it is important to know how many cyclists are on the road in order to evaluate whether the infrastructure (cycle lanes, crossings etc) and investment in schemes (rentable Voi bikes) need to adapt to meet demand. The modelling goal is to develop a sequence of increasingly complex linear regression models to isolate how temporal and weather variables, such as the day of the week and the temperature, influence cycling demand. Ultimately, the goal is to extrapolate cycling demand to the future so that Edinburgh City Council and Transport Scotland can optimise infrastructure investment over the next decade to align with their active travel priorities.
+The "cycle daily" dataset  consists of approximately 2,180 daily observations ranging from 2020 to 2025, sourced from Edinburgh's network of automatic cycling counters, along with local weather and temporal data. This data comes from sensors at specific locations across the city, so it's possible not every cyclist is accounted for. Similarly, some cyclists may pass through multiple sensors in a day and be observed more than once. However, they are a good indicator of how cycling demand varies across different days and weather patterns. Edinburgh relies heavily on public transport for its residents and tourists to navigate the city. For future funding allocation and planning, it is important to know how many cyclists are on the road in order to evaluate whether the infrastructure (cycle lanes, crossings etc) and investment in schemes (eg rentable Voi bikes) need to adapt to meet demand. The modelling goal is to develop a sequence of increasingly complex linear regression models to isolate how temporal and weather variables, such as the day of the week and the temperature, influence cycling demand. Ultimately, the goal is to extrapolate cycling demand so that Edinburgh City Council and Transport Scotland can optimise infrastructure investment over the next decade to align with their active travel priorities.
 
 
 # Exploratory data analysis
 
-To begin investigating the impact of weather on the number of daily cyclists, we begun with some exploratory data analysis. Table 1 displays the summary statistics for the weather data and number of daily cyclists is as follows:
+To begin investigating the impact of weather on the number of daily cyclists, we begun with some exploratory data analysis. This involved converting month to an ordered factor, redefining the day of week predictor with explicit levels. Additionally, we created a new variable 'trend' which symbolises the number of days since the first observation (01/01/2020), along wtih binary indicators 'is_covid' and 'is_holiday' which represent the UK Covid lockdown (23/03/2020 - 31/03/2021) and the yearly festive period (24th - 31st December) respectively. 
 
-## Summary Statistics table for count, temp_mean, temp_min, temp_max
+We initially found the summary statistics for the number of daily cyclists and the weather data.
 
 ```{r summary stats exploratory table, echo=FALSE}
 
@@ -42,77 +42,74 @@ knitr::kable(summary_stats,
              digits = 2, 
              caption = "Summary Statistics for count, temp mean, temp min, temp max")
 ```
-We can see that the number of daily cyclists varies from $1,264$ to $43,864$, an increase of $\approx 3470 \%$, and the variation is very high. Intuitively, one would think that a warmer average weather would lead to more cyclists. 
 
-We then plotted a time series of the daily cyclist count from 2020 to 2025. 
+We can see that the number of daily cyclists varies from $1,264$ to $43,864$, a variation of $\approx 3370 \%$. Intuitively, one would think that a warmer average weather would lead to more cyclists. 
 
-## Time series of daily counts 2020-2025 with a smoother.
+We then plotted a time series of the daily cyclist count over the period of observations. 
 
-```{r time series, fig.cap="Time series of daily counts 2020-2025 with a smoother"}
+```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025"}
 plot_timeseries
 ```
 
 
-We can see from figure 1 that there are yearly fluctuations, with peaks and troughs occuring yearly. Overall, the cyclist count seems to be decreasing. There is a visible peak in 2022, which we investigate. We then created boxplots of the daily cyclist count by month and by the day of week. 
+We can see from Figure X that there are yearly fluctuations, with peaks and troughs occurring seasonally. Overall, the cyclist count seems to be decreasing over time. There is a visible peak on and surrounding the 10th of August 2022, which we investigated. We found that there was a London-Edinburgh-London bicycle event taking place over this period with over 2000 riders$^{1}$. Supposing each cyclist passed through multiple sensors over the course of the days, this likely explains the inflated numbers. 
+
+We then created boxplots of the daily cyclist count by month and by the day of week to observe whether they had any significant impact on the number of daily cyclists. 
 
 
-## Boxplots of count by month and by day of week.
-
-```{r boxplots of count by month and day of week, fig.cap="Boxplots of count by month and by day of week"}
+```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week"}
 grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 
 
-We can see from figure 2 that the winter months have slightly lower cyclist counts, with the other months remaining relatively constant. This indicates that the month does not have a tremendous impact on the number of daily cyclists outside of January and December. From the second boxplot, there appear to be less cyclists on Mondays and Sundays, with the other days again appearing relatively constant. 
+We can see from Figure 2 that the colder months (October - February) have slightly lower cyclist counts, with the other months remaining relatively constant. There are a lot of outliers, especially in Spring. Observations with unusually high cyclist counts could be attributed to special events such as races, bank holidays, and exceptionally sunny days. Outside of winter, the month doesn't appear to have a tremendous impact on the median daily cyclist count. 
 
-## Scatter plot of count vs temp_mean.
+The second boxplot indicates that there tends to be less cyclists on Mondays and Sundays, with the other days appearing relatively constant. 
 
-```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of count vs temperature mean"}
+We then plotted the daily cyclist count against the mean temperature, with red and blue lines indicating regression and quadratic relationship respectively. 
+
+```{r scatter plot of count vs temp_mean, fig.cap="Daily cyclist count vs mean temperature"}
 plot_temp_scatter
 ```
 
-Figure 3 shows a scatter plot of daily counts vs the mean temperature for that day, with the red line being the regression line. There is a general trend as the temperature increases, so does the daily count which is as expected.
+There is a visible positive correlation between temperature mean and daily cyclist count, which was to be expected. There are less observations for the days with the lowest and highest mean temperatures, so there is not a clear trend that we can see for those days. There is a large variation in cyclist counts for days with the same temperature, so it is not feasible to predict counts based off of mean temperature alone.  
 
-## Extra Plots
+We noticed dips in cyclist numbers between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created the following graph to illustrate this over the course of the 5 years. 
 
-```{r Boxplots of weekend and weekday, fig.cap="Boxplots of count vs weekend or weekday over the months (across 2020 to 2025)"}
-plot_weekend_seas
+```{r plot showing december"}
+plot_december
 ```
 
-Figure 4 shows for each month a boxplot for the different day types (weekends or weekdays). Generally the medians tend to be higher for the weekdays across all the months, but by varying amounts. June and Novemeber seems to have the biggest variance between the two days types
+Clearly, there is a substantial decrease in cyclist numbers between the specified days. This led us to add whether a day falls between the 24th and 31st of December in our final model as 'is_holiday'.
 
-# Baseline model M0
+We also created a chart that demonstrates the effect of whether a day is lockdown on daily cyclist counts.
 
-<!--
-Required content:
-  1. State M0 mathematically using a numbered equation.
-  2. Coefficient table (use kable, not raw output).
-  3. Residuals vs fitted and normal QQ diagnostic plots, side by side.
-  4. Brief assessment: what does M0 get right and wrong? 
-     What motivates M1?
--->
+# Baseline model 
+
+We fit an initial model, M0, that uses the mean temperature, along with the month and whether it is a weekend in order to predict the daily cyclist count.
 
 The equation for M0 is:
 
-$$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2)$$
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$$$\epsilon_i \sim N(0, \sigma^2)$$
 
-Table 2 shows the summary statistics for model 0.
+The following table shows the summary statistics for M0:
 
 ```{r summary for m0, echo=FALSE} 
-##notice the p values all 0 bc rounding
+##notice the p values all 0 because of rounding
 
 knitr::kable(summary(m0)$coefficients, 
-             digits = 2, 
-             caption = "Summary of model M")
+             caption = "Summary of M0")
 ```
+For every 1 degree increase in the mean daily temperature, the model predicts an increase of 247 cyclists per day, and predicts a 1247 decrease in cyclist count on weekends compared to weekdays. Since M0 uses month as a numeric predictor, it ignores the fact that cyclist counts generally increase in summer and fall in winter. Currently, the model suggests that there is a decrease of 247 cyclists for each month passing.
 
-Residuals vs fitted and normal QQ diagnostic plots.
+We then assessed the diagnostic plots for M0. 
 
-```{r r vs f and qq plots m0, fig.cap="Boxplots of count by month and by day of week"}
+```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0"}
 grid.arrange(p1_m0,p2_m0, ncol = 2)
 plot(m0, which = 4)
 
 ```
+The Normal
 
 Model 0 (m0) shows a mean variance of 0, independent of the fitted values.
 The residuals show a non-linear pattern, with an arguable 'n' shape above the mean line, indicating there is an underlying non-linear structure yet to be included in our model.
@@ -269,7 +266,11 @@ As we can see, there is huge variablity between seasons. For transport planning 
 Do not introduce new results here.
 -->
 
-# Appendix: Code
+# Appendix - References
+$^{1}$ https://mccyclingdiary.blogspot.com/2022/08/london-edinburg-london-lel-2022-edition.html
+
+# Appendix - Code
+
 
 All analysis code is in `code.R` and is reproduced below.
 
