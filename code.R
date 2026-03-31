@@ -126,18 +126,13 @@ plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = fac
 # Note: Use factor(month) in formulas for M1-M3
 m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), 
          data = cycle_daily_df)
-
-## m0 + factor(month) unsure what double parameters - choose factor version to avoid collinearity
-m1_literal<- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month) + 
-           trend + factor(month) + factor(dow), 
-         data = cycle_daily_df)
 ##m1_literal has collinear terms so we define the factor versions of month and 
 #dow and omit the weekend.
 
 m1 <- lm(count ~ temp_mean + trend + factor(month) + factor(dow), 
          data = cycle_daily_df)
 
-m2 <- lm(count ~ temp_mean + I(temp_mean^2) + as.numeric(weekend) + trend + 
+m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
            factor(month) + factor(dow), data = cycle_daily_df )
 
 ###m3 ideas 
