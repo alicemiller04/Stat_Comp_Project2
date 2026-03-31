@@ -148,6 +148,7 @@ Plot grid 2:
 Observe the leverage and thus influence is larger for the outliers of m1.
 
 ## Model M2: Nonlinear temperature
+
 Observe from the temperature vs count scatter plot, there is some non linear relationship as we can see some curvature (blue line).
 Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
 
@@ -156,13 +157,6 @@ grid.arrange(p_m1_1, p_m1_2, p_m2_1, p_m2_2, nrow = 2, ncol = 2)
 grid.arrange(p_m1_3, p_m1_4, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
 ```          
 
-```{r thing}
-grid.arrange(p1_m1,p2_m1,p1_m2,p2_m2, nrow = 2, ncol = 2)
-           
-```
-M2 shows a general allignment with linear modelling assumptions - 
-no big violations.
-Observe that both models look almost identical from the diagnostic plots, which indicates further comparison may be undertaken using the scores.
 
 M2 shows a general alignment with linear modelling assumptions - there are
 no notable violations.
@@ -174,38 +168,39 @@ that is the leverage of the outliers decreases.
 
 
 ## Model M3: [your extension title]
-The expression is
+The expression is: 
+$$ $$
 
 Rationale for M3:
 To mediate the heavy right tailed QQ plots seen in (m0-2), we apply the log 
 transform to the count response.
 
-m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
-               factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
+
+
+```{r improvements from adding is holiday variable to m3}
+
+library(ggplot2)
+
+# holiday variable
+ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Impact of Holidays on Daily Cycle Count",
+       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count")
+
+# COVID variable
+ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "lm") +
+  labs(title = "Cycling Trends: Non Covid vs. Covid Era")
+
+```
+
 
 ```{r M3 compared to M2}
 grid.arrange(p_m2_1, p_m2_2, p_m3_1, p_m3_2, nrow = 2, ncol = 2)
 grid.arrange(p_m2_3, p_m2_4, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
 ```
 
-```{r improvements from adding is holiday variable to m3}
-
-library(ggplot2)
-
-# Visualization 1: Do holidays actually look different?
-ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
-  geom_boxplot(fill = "lightblue") +
-  labs(title = "Impact of Holidays on Daily Cycle Count",
-       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count")
-
-# Visualization 2: The COVID 'Step'
-ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "lm") +
-  labs(title = "Cycling Trends: Pre-Covid vs. Covid Era")
-
-
-```
 
 
 # Evaluation
