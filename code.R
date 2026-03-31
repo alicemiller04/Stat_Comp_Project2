@@ -122,15 +122,10 @@ december_trends <- cycle_daily_df %>%
 
 # Create the plot
 plot_decemeber <-ggplot(december_trends, aes(x = day, y = avg_count)) +
-  geom_line(color = "darkblue", size = 1) +
-  geom_ribbon(aes(ymin = avg_count - sd_count, ymax = avg_count + sd_count), 
-              fill = "lightblue", alpha = 0.3) +
-  geom_vline(xintercept = 25, linetype = "dashed", color = "red") +
-  annotate("text", x = 26, y = max(december_trends$avg_count), 
-           label = "Christmas Day", color = "red", hjust = 0) +
-  labs(title = "The 'Festive Dip': Average Cycling Demand in December",
-       subtitle = "Aggregated daily counts across 2020-2024",
-       x = "Day of December",
+  geom_line(size = 1) +
+  labs(title = "Average Cycling Demand in December",
+       subtitle = "Average daily counts across 2020-2024",
+       x = "Day in December",
        y = "Average Daily Cyclists") +
   theme_minimal()
 
@@ -447,7 +442,7 @@ table3_final <- data.frame(
 # 5.1 
 
 # test and train
-n = 2192 
+n = nrow(cycle_daily_df)
 set.seed(1234)
 
 idx <- sample(1:n, size = round(0.7 * n))
