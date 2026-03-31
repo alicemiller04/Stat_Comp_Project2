@@ -122,59 +122,59 @@ This indicates the model is particularly bad at predicting high count observatio
 
 We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025.
 
-Our proposed equation for M1 is:
-$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \beta_k \text{month}_i + \beta_j \text{dow}_i +  \epsilon_i$$ 
-$$\epsilon_i \sim N(0, \sigma^2), k \in \{1,...,12 \}, j \in \{1,...,7 \} $$
+Our proposed equation for M1 (identifiable form) is:
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 
-Rational for investigating m1 over m0:
-m1 has the granularity for the effect of different weekdays rather than mere weekend or non weekend effects.
+$$\epsilon_i \sim N(0, \sigma^2)$$
+
+Day 1 (Monday) and month 1 (Jan) are encapsulated in the intercept term $\beta_0$
+Every other month or day is measured as the expected difference in count from the baseline.
+
+
+We investigate m1 over m0 because m1 has the granularity for the effect of different weekdays rather than simplistic weekend or non weekend effects.
 Changing 'month' to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
-
-We omit the weekend term and numerical version of month to avoid collinearity with their 'factor' versions and because the covariate dow is collinear with weekend.
+We omit the weekend term and numerical version of 'month' to avoid collinearity with their 'factor' versions and because the covariate 'dow' is collinear with 'weekend'.
 
 
 ```{r side by side comparison of M0 and M1}
 grid.arrange(p_m0_1,p_m0_2,p_m1_1,p_m1_2, nrow = 2, ncol = 2)
 grid.arrange(p_m0_3, p_m0_4, p_m1_3, p_m1_4, nrow = 2, ncol = 2)
 ```
-
 Plot grid 1:
-Observe in the bottom left: the mean residual line follows a slight sigmoid shape, 
+Observe in the bottom left, the mean residual line follows a slight sigmoid shape, 
 suggesting the linear assumption is still violated for model 1.
 On a positive note, the 'n' pattern about the mean is less pronounced for model 1.
-The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0).This suggests the prediction for the low count days is better.
+The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0). This suggests the prediction for the low count days is better.
 
 Plot grid 2: 
 Observe the leverage and thus influence is larger for the outliers of m1.
 
 ## Model M2: Nonlinear temperature
+Our proposed equation for M2 (identifiable form) is:
+$$\text{count}_i = \beta_0 + \beta_1 \text{temp_mean}_i + \beta_2 \text{temp_mean}^2_i + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
+$$\epsilon_i \sim N(0, \sigma^2)$$
 
-Observe from the temperature vs count scatter plot, there is some non linear relationship as we can see some curvature (blue line).
+From the temperature vs count scatter plot, we see there is an underlying some non linear relationship as we can see some curvature.
 Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
 
 ```{r side by side comparison of M1 and M2}
 grid.arrange(p_m1_1, p_m1_2, p_m2_1, p_m2_2, nrow = 2, ncol = 2)
 grid.arrange(p_m1_3, p_m1_4, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
 ```          
-
-
-M2 shows a general alignment with linear modelling assumptions - there are
+M2 shows a general alignment with linear modelling assumptions since there are
 no notable violations.
-Observe that both models look almost identical from the diagnostic plots, 
-which indicates further comparison may be undertaken using the scores.
-We observe the residuals vs leverage plot improves for m2;
-that is the leverage of the outliers decreases.
-
+Observe both models are almost identical from the diagnostic plots, 
+therefore further comparison may be undertaken using the scores.
+The only noticeable change comes from the leverage of the outliers increasing slightly.
 
 
 ## Model M3: [your extension title]
 The expression is: 
-$$ $$
+$$\log(count_i + 1) = \beta_0 + \beta_1 temp\_mean_i + \beta_2 temp\_mean_i^2 + \beta_3 trend_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(month_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(dow_i = k) + \beta_4 is\_covid_i + \beta_5 is\_holiday_i + \epsilon_i$$
+$$\epsilon_i \sim N(0, \sigma^2)$$
 
-Rationale for M3:
 To mediate the heavy right tailed QQ plots seen in (m0-2), we apply the log 
-transform to the count response.
-
+transform to the count response. We addd terms is_covid and is_summer ???
 
 
 ```{r improvements from adding is holiday variable to m3}
