@@ -126,6 +126,7 @@ plot_weekend_seas <- ggplot(cycle_daily_df, aes(x = month, y = count, fill = fac
 # Note: Use factor(month) in formulas for M1-M3
 m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), 
          data = cycle_daily_df)
+
 ##m1_literal has collinear terms so we define the factor versions of month and 
 #dow and omit the weekend.
 
@@ -135,10 +136,8 @@ m1 <- lm(count ~ temp_mean + trend + factor(month) + factor(dow),
 m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
            factor(month) + factor(dow), data = cycle_daily_df )
 
-###m3 ideas 
-
-m3 <- lm(log(count+1) ~ temp_mean:is_summer + I(temp_mean^2) + trend + 
-               factor(month) +factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
+m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
+               factor(month) + factor(dow)  + is_covid + is_freezing + is_holiday, data = cycle_daily_df)
 
 #m0
 # Add residuals and fitted values to the dataframe.
