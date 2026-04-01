@@ -169,12 +169,14 @@ transform to the count response. We added in binary predictor variables - 'is_ho
 ```{r Boxplot of holiday, fig.cap="Boxplot of 'is_holiday' variable (Dec 24th - 31st)", fig.height = 3, fig.width = 5}
 plot_holiday
 ```
+
 We can see from Figure 8 that the median daily cyclist count is significantly lower during the specified festive period. The spread (IQR) of counts is also very small during the festive period, indicating that there are consistently much lower counts during this time. This suggests that it is a valid indicator to include. 
 
 ```{r Impact of adding covid, fig.cap="Overall trend during lockdown and over the whole period", fig.width = 6, fig.height = 3}
 plot_covid
 
 ```
+
 We can see from Figure 9 that during the lockdown period, the decline is more pronounced than for the whole time period that the data spans. This indicates that there is an observable effect of Covid on the cyclist count, and that it is justified in adding it into M3. 
 
 We then evaluated the assumptions of M3 through looking at the following diagnostic plots. 
@@ -182,6 +184,7 @@ We then evaluated the assumptions of M3 through looking at the following diagnos
 ```{r Diagnostic plots M3, fig.cap="Diagnostic Plots for M3", fig.height = 4, fig.width = 6}
 grid.arrange(p_m3_1, p_m3_2, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
 ```
+
 The difference in the linear assumption is negligible compared to the previous models. The Q-Q plot suggests that the normality assumption is more justified than in the previous models. The scale-location plot suggests that M3 displays greater heteroscedasticity, meaning the constant variance assumption is violated more than in M2. There is still a point of high influence as shown in the Residuals vs Leverage plot. 
 
 Our final model is M2. We created a coefficient table for it as follows.
@@ -191,19 +194,17 @@ Our final model is M2. We created a coefficient table for it as follows.
 cycle_daily_df$month <- factor(cycle_daily_df$month, ordered = FALSE)
 cycle_daily_df$dow <- factor(cycle_daily_df$dow, ordered = FALSE)
 
-# Now re-run your model
-m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
+m2new <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
            factor(month) + factor(dow), data = cycle_daily_df )
-m2_table <- as.data.frame(summary(m2)$coefficients)
+m2_table <- as.data.frame(summary(m2new)$coefficients)
 colnames(m2_table) <- c("estimate", "std Error", "t value", "p value")
 
 kable(m2_table, 
       digits = 4, 
-      caption = "Summary for Model M2") %>%
-  kable_styling(latex_options = c("scale_down", "hold_position"))
+      caption = "Summary for Model M2") 
                 
 ```
-
+We can see 
 # Evaluation
 ## Statistical Performance
 
