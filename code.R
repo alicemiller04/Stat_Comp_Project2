@@ -77,7 +77,12 @@ summary_stats <- cycle_daily_df %>%
 plot_timeseries <- ggplot(cycle_daily_df, aes(x = date, y = count)) +
   geom_line(alpha = 0.4, color = "gray") + 
   geom_smooth(method = "gam", color = "blue", se = TRUE) + # The smoother line
-  scale_x_date(date_breaks = "12 months", date_labels = "%b %Y") + 
+  scale_x_date(
+    date_breaks = "1 year",      
+    date_labels = "%b %Y",     
+    expand = c(0, 0), 
+    limits = c(as.Date("2020-01-01"), as.Date("2025-12-31"))
+  ) +  
   labs(
     title = "Daily Cycling Count in Edinburgh (2020-2025)",
     x = "Date",

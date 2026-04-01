@@ -9,6 +9,7 @@ output:
     latex_engine: xelatex
   html_document:
     df_print: paged
+  word_document: default
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{float}
@@ -47,7 +48,7 @@ We can see from table 1 that the number of daily cyclists varies from $1,264$ to
 
 We then plotted a time series of the daily cyclist count over the period of observations. 
 
-```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025."}
+```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025.",fig.height = 3, fig.width = 5}
 plot_timeseries
 ```
 
