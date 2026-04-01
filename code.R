@@ -12,50 +12,22 @@ library(ggplot2); library(dplyr); library(tidyr)
 library(lubridate); library(knitr); library(kableExtra)
 library(patchwork); library(broom); library(gridExtra)
 
-
 # 1. Load data
 load('cycle_daily_df.Rdata')
 
 # 2.1 Data Wrangling 
 cycle_daily_df <- cycle_daily_df %>%
   mutate(
-    
-    #Season indicator
     m_num = month(date),
-    is_spring = ifelse(m_num %in% 3:5, 1, 0),
-    is_summer = ifelse(m_num %in% 6:8, 1, 0),
-    is_autumn = ifelse(m_num %in% 9:11, 1, 0),
-    is_winter = ifelse(m_num %in% c(12, 1, 2), 1, 0),
-    
-    # Task 2: dow with explicit levels 
-    dow = factor(dow,
-                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
-                 ordered = TRUE),
-    
-    # Task 3: trend as integer days since 2020-01-01
-    trend = as.numeric(date - date[1], units = "days"),
-    
-    #Covid indicator
-    is_covid = ifelse(date >= "2020-03-23" & date <= "2021-03-31",1,0),
-    
-    #festive period indicator
-    is_holiday = ifelse(m_num == 12 & day(date) >=24 & day(date)<=31, 1,0),
-    
-    #Daily temp range
-    temp_range = temp_max - temp_min,
-    
-    #cold indicator
-    is_freezing = ifelse(temp_min <= 0, 1, 0))%>%
-  
-  mutate(
-    
-    # Task 1: month as ordered factor for plots/inference
-    month = factor(m_num,
-                    levels = 1:12,    
-                    labels = month.abb, 
-                    ordered = TRUE)
-    
-    )
+    # Task 2: Days of week
+    dow = factor(dow, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), ordered = TRUE),
+    # Task 3: Trend (Hard-coded date is safer than date[1])
+    trend = as.numeric(date - as.Date("2020-01-01")),
+    is_covid = ifelse(date >= "2020-03-23" & date <= "2021-03-31", 1, 0),
+    is_holiday = ifelse(m_num == 12 & day(date) >= 24, 1, 0),
+    # Task 1: Month labels
+    month = factor(m_num, levels = 1:12, labels = month.abb, ordered = TRUE)
+  )
 
 # 2.2 exploratory plots
 
@@ -105,11 +77,14 @@ plot_dow <- ggplot(cycle_daily_df, aes(x = dow, y = count)) +
   labs(title = "Cycling Demand by Day of Week", x = "Day", y = "Count") +
   theme_minimal()
 
-# Scatter plot of count vs mean temperature
+#Boxplot by temp mean
 plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
-  geom_point(alpha = 0.3) + # alpha changes the opaqueness of the points
-  geom_smooth(method = "lm", color = "red", se = TRUE)+
-  geom_smooth(method = "lm", formula = y ~ x + I(x^2), color = "blue") +
+  geom_point(alpha = 0.3) + 
+  geom_smooth(aes(color = "Linear"), method = "lm", se = TRUE) +
+  geom_smooth(aes(color = "Quadratic"), method = "lm", formula = y ~ x + I(x^2)) +
+  
+  scale_color_manual(name = "Different", 
+                     values = c("Linear" = "red", "Quadratic" = "blue")) +
   labs(
     title = "Cycling Count vs. Mean Temperature",
     x = "Mean Daily Temperature (°C)",
@@ -148,7 +123,17 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend +
            factor(month) + factor(dow), data = cycle_daily_df )
 
 m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
-               factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
+           factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
+
+
+# Define named list once
+models_list <- list(
+  m0 = formula(m0),
+  m1 = formula(m1),
+  m2 = formula(m2),
+  m3 = formula(m3)
+)
+
 
 # ggplots for models:
 
@@ -207,46 +192,16 @@ p_m1_4 <- gg_diagnostic(m1_fort, 4, "m1")
 p_m2_4 <- gg_diagnostic(m2_fort, 4, "m2")
 p_m3_4<- gg_diagnostic(m3_fort, 4, "m3")
 
-# 4. Cross-Validation Functions
-
-# 4. Cross-Validation Functions
-
-calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
-  # y     : vector of observed values
-  # mu    : vector of predictive means (from predict(fit, newdata=test)$fit)
-  # sigma : vector of predictive SDs. Combine residual error and mean uncertainty:
-  #         sigma = sqrt(summary(fit)$sigma^2 +
-  # predict(fit, newdata=test, se.fit=TRUE)$se.fit^2)
-  # Returns a named list with RMSE, MAE, DS, IS
-  
-  # Implement RMSE, MAE, DS, and IS here
-  
-  #RMSE
-  RMSE <- sqrt(mean((y - mu)^2))
-  
-  #MAE
-  MAE <- mean(abs(y - mu))
-  
-  #DS
-  DS <- mean(log(sigma^2) + ((y - mu)^2 / sigma^2))
-  
-  #IS
-  lower <- mu - (qnorm(1-alpha/2) * sigma)
-  upper <-mu + (qnorm(1-alpha/2) * sigma)
-  IS <-  mean((upper - lower) + 
-                (2/alpha)* pmax(0,(lower - y)) + 
-                (2/alpha)*pmax(0,(y - upper)))
-  
-  # make a table with the results
-  return (data.frame(Model = model_name, RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
+# Inside your CV loop, replace the 'if (mod_name == "m3")' block:
+if (mod_name == "m3") {
+  # Apply bias correction: Mean = exp(mu + sigma^2 / 2) - 1
+  # Here, res_std_error is the sigma of the log-model
+  mu <- exp(mu + (res_std_error^2 / 2)) - 1
+  # Sigma of a log-normal is more complex, but this is a standard approximation:
+  sigma <- sqrt((exp(res_std_error^2) - 1) * exp(2 * pred_obj$fit + res_std_error^2))
 }
 
-
-
-
-
 # 4. Cross-Validation Functions
-
 calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
   # y     : vector of observed values
   # mu    : vector of predictive means (from predict(fit, newdata=test)$fit)
@@ -273,14 +228,39 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
                 (2/alpha)* pmax(0,(lower - y)) + 
                 (2/alpha)*pmax(0,(y - upper)))
   
-  # make a table with the results
+  # Synthesise table
   return (data.frame(Model = model_name, RMSE = RMSE, MAE = MAE, DS = DS, IS = IS))
 }
-
-
+calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
+  # RMSE
+  RMSE <- sqrt(mean((y - mu)^2, na.rm = TRUE))
+  
+  # MAE
+  MAE <- mean(abs(y - mu), na.rm = TRUE)
+  
+  # DS
+  DS <- mean(log(sigma^2) + ((y - mu)^2 / sigma^2), na.rm = TRUE)
+  
+  # IS
+  lower <- mu - qnorm(1 - alpha/2) * sigma
+  upper <- mu + qnorm(1 - alpha/2) * sigma
+  
+  IS <- mean((upper - lower) + 
+               (2/alpha) * pmax(0, lower - y, na.rm = TRUE) + 
+               (2/alpha) * pmax(0, y - upper, na.rm = TRUE), na.rm = TRUE)
+  
+  # Return as a clean data frame for bind_rows() later
+  return(data.frame(
+    Model = model_name, 
+    RMSE = RMSE, 
+    MAE = MAE, 
+    DS = DS, 
+    IS = IS
+  ))
+}
 
 # 5. Leave-One-Year-Out CV Loop 
-# Define models in a list ###change formulas!!!
+# Define models in a list 
 models_list <- list(m0 = count ~temp_mean + as.numeric(weekend) +
                       as.numeric(month),
                     m1 = count~ temp_mean + I(temp_mean^2)  + trend + 
@@ -289,54 +269,65 @@ models_list <- list(m0 = count ~temp_mean + as.numeric(weekend) +
                       as.numeric(weekend) + trend + factor(month) + factor(dow), 
                     m3 = log(count+1) ~ temp_mean + I(temp_mean^2) + 
                       trend + factor(month) + factor(dow)  + is_covid  + is_holiday)
- 
-cycle_daily_df$date <- as.Date(cycle_daily_df$date)
-cycle_daily_df$year <- year(cycle_daily_df$date)
+
+
+# Define the named list of formulas (CRITICAL: must have names m0, m1, etc.)
+models_list <- list(
+  m0 = formula(m0),
+  m1 = formula(m1),
+  m2 = formula(m2),
+  m3 = formula(m3)
+)
+
 years <- sort(unique(cycle_daily_df$year))
 table1_results <- list()
 
 for (y in years) {
-  # Split: Extract one year for testing
+  # Split data
   train_data <- subset(cycle_daily_df, year != y)
   test_data  <- subset(cycle_daily_df, year == y)
   
   for (mod_name in names(models_list)) {
-    # Fit the model on the remaining years
+    # Fit model
     fit <- lm(models_list[[mod_name]], data = train_data)
     
-    # Get predictive means (mu) and standard errors (se.fit)
+    # Get predictions and standard errors
     pred_obj <- predict(fit, newdata = test_data, se.fit = TRUE)
-    mu <- pred_obj$fit
+    mu_raw <- pred_obj$fit
     
-    # Calculate total predictive SD (sigma)
-    # Combining residual variance and uncertainty in the mean
-    res_std_error <- summary(fit)$sigma
-    sigma <- sqrt(res_std_error^2 + pred_obj$se.fit^2)
-    
-    if (mod_name == "m3") { #transforming the log back
-      mu_3 <- exp(mu)- 1
-      sigma_3 <- mu_3 * res_std_error
-      mu <- mu_3
-      sigma<- sigma_3
+    # Check if we are dealing with the log-model (m3)
+    if (mod_name == "m3") {
+      # Total variance on the log scale
+      total_log_var <- summary(fit)$sigma^2 + pred_obj$se.fit^2
+      
+      # Back-transform to the original scale (The Mean with Smearing Correction)
+      mu <- exp(mu_raw + (total_log_var / 2)) - 1
+      
+      # Back-transform the Standard Deviation (The Sigma)
+      sigma <- sqrt((exp(total_log_var) - 1) * exp(2 * mu_raw + total_log_var))
+      
+    } else {
+      # Standard models (m0, m1, m2)
+      mu <- mu_raw
+      # Total predictive uncertainty (residual error + estimation error)
+      sigma <- sqrt(summary(fit)$sigma^2 + pred_obj$se.fit^2)
     }
-
     
-    # Run  calc_scores 
+    # Calculate scores using our robust function
     scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma, model_name = mod_name)
     
-    # Store result with identifiers
+    # Store result
     table1_results[[paste(y, mod_name, sep="_")]] <- scores %>% mutate(Split_Year = y)
-    
   }
 }
 
-#finding the average scores for each model and displaying
-all_cv_results <- bind_rows(table1_results)
-table1_final <- all_cv_results %>%
+# Combine and average results
+table1_final <- bind_rows(table1_results) %>%
   group_by(Model) %>%
-  summarise(across(c(RMSE, MAE, DS, IS), mean))
+  summarise(across(c(RMSE, MAE, DS, IS), mean, na.rm = TRUE))
 
-table1_final
+print(table1_final)
+
 
 #Table 2, CV RMSE and DS by month for final model 
 
@@ -425,6 +416,13 @@ M2_Tmin <- lm(count ~ temp_mean + I(temp_min^2) + trend +
 M2_Tmax <- lm(count ~ temp_mean + I(temp_max^2) + trend + 
                 
                 factor(month) + factor(dow), data = train )
+
+b1 <- coef(M2_Tmax)["temp_max"]
+b2 <- coef(M2_Tmax)["I(temp_max^2)"]
+
+# Slope at 5C and 15C
+val_5  <- round(b1 + (2 * b2 * 5), 0)
+val_15 <- round(b1 + (2 * b2 * 15), 0)
 
 m2_scores <- function(model, data = test) {
   mu <- predict(model, data = test)
