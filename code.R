@@ -314,46 +314,59 @@ table1_final <- bind_rows(table1_results) %>%
 
 print(table1_final)
 
-#Table 2, CV RMSE and DS by month for final model 
-
-#Fit Full models
 m1_full <- lm(models_list$m1, data = cycle_daily_df)
 m2_full <- lm(models_list$m2, data = cycle_daily_df)
 m3_full <- lm(models_list$m3, data = cycle_daily_df)
 
-mbest = m3_full
+mbest <- m2_full 
 
 months_list <- month.abb
 table2_results <- list()
 
-for (m in months_list){
+# Get the residual variance once from the full model
+res_var <- summary(mbest)$sigma^2
+
+for (m in months_list) {
   
-  #extract one month to test 
+  # Extract data for the specific month
   test_data <- subset(cycle_daily_df, month == m)
   
-  # predict on the other month
+  # Skip if no data for that month
+  if(nrow(test_data) == 0) next 
+  
+  # Predict on the month using the best model
+  # We use se.fit = TRUE to get the uncertainty of the model fit
   pred_obj <- predict(mbest, newdata = test_data, se.fit = TRUE)
   
-  # Calculate total predictive SD (sigma)
-  # Combining residual variance and uncertainty in the mean
-  res_std_error <- summary(fit)$sigma
+  # Since m2 is linear
+  mu_final <- pred_obj$fit
   
-  #transform back
-  mu_back <- exp(pred_obj$fit) - 1
-  sigma_back <- mu_back * res_std_error
+  # Calculate predictive sigma
+  sigma_final <- sqrt(res_var + pred_obj$se.fit^2)
   
-  # Run calc_scores
-  scores <- calc_scores(y = test_data$count, mu = mu_back, sigma = sigma_back, model_name = "m3")
+  # Run calc_scores 
+  scores <- calc_scores(y = test_data$count, 
+                        mu = mu_final, 
+                        sigma = sigma_final, 
+                        model_name = "m2")
   
-  # Store result with identifiers
-  table2_results[[m]] <- data.frame(Month = m, RMSE = scores$RMSE, DS = scores$DS)
+  # Store result
+  table2_results[[m]] <- data.frame(
+    Month = m, 
+    RMSE = scores$RMSE, 
+    DS = scores$DS
+  )
 }
 
+# Round and collect
 table2_final <- bind_rows(table2_results) %>%
   mutate(
     RMSE = round(RMSE, 1),
     DS = round(DS, 2)
   )
+
+print(table2_final)
+
 
 
 #table 3 - trend coefficients from M1 - M3
