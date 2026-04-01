@@ -92,7 +92,7 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   ) +
   theme_minimal()
 
-# holiday boxplots
+# Holiday boxplots
 plot_holiday <- ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
   geom_boxplot() +
   labs(title = "Impact of Festive Period on Daily Cycle Count",
@@ -106,7 +106,7 @@ plot_covid <- ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_
   labs(title = "Cycling Trends: Non Covid vs. Covid Era") +
   theme_minimal()
 
-# non trivial plot - festive period
+# Non trivial plot - festive period
 # Filter for December and calculate the average count for each day across all years
 december_trends <- cycle_daily_df %>%
   filter(month(date) == 12) %>%
@@ -127,7 +127,7 @@ plot_december <-ggplot(december_trends, aes(x = day, y = avg_count)) +
 m0 <- lm(count ~ temp_mean + as.numeric(weekend) + as.numeric(month), 
          data = cycle_daily_df)
 
-##m1_literal has collinear terms so we define the factor versions of month and 
+#m1_literal has collinear terms so we define the factor versions of month and 
 #dow and omit the weekend.
 
 m1 <- lm(count ~ temp_mean + trend + factor(month) + factor(dow), 
@@ -139,7 +139,6 @@ m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend +
 m3 <- lm(log(count+1) ~ temp_mean + I(temp_mean^2) + trend + 
            factor(month) + factor(dow)  + is_covid + is_holiday, data = cycle_daily_df)
 
-
 # Define named list once
 models_list <- list(
   m0 = formula(m0),
@@ -148,14 +147,11 @@ models_list <- list(
   m3 = formula(m3)
 )
 
-
 # ggplots for models:
-
 m0_fort <- fortify(m0)
 m1_fort <- fortify(m1)
 m2_fort <- fortify(m2)
 m3_fort <- fortify(m3)
-
 
 # Helper function to mimic Base R's plot(lm)
 gg_diagnostic <- function(model_fort, type = 1, mod_name = "") {
@@ -266,18 +262,8 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 }
 
 # 5. Leave-One-Year-Out CV Loop 
-# Define models in a list 
-models_list <- list(m0 = count ~temp_mean + as.numeric(weekend) +
-                      as.numeric(month),
-                    m1 = count~ temp_mean + I(temp_mean^2)  + trend + 
-                      factor(month) + factor(dow), 
-                    m2 = count ~ temp_mean + I(temp_mean^2) + 
-                      as.numeric(weekend) + trend + factor(month) + factor(dow), 
-                    m3 = log(count+1) ~ temp_mean + I(temp_mean^2) + 
-                      trend + factor(month) + factor(dow)  + is_covid  + is_holiday)
 
-
-# Define the named list of formulas (CRITICAL: must have names m0, m1, etc.)
+# Define the named list
 models_list <- list(
   m0 = formula(m0),
   m1 = formula(m1),
@@ -301,43 +287,36 @@ for (y in years) {
     pred_obj <- predict(fit, newdata = test_data, se.fit = TRUE)
     mu_raw <- pred_obj$fit
     
-    # Check if we are dealing with the log-model (m3)
+    # log-model (m3) changes
     if (mod_name == "m3") {
       # Total variance on the log scale
       total_log_var <- summary(fit)$sigma^2 + pred_obj$se.fit^2
-      
-      # Back-transform to the original scale (The Mean with Smearing Correction)
+      # Back-transform to the original scale 
       mu <- exp(mu_raw + (total_log_var / 2)) - 1
-      
-      # Back-transform the Standard Deviation (The Sigma)
       sigma <- sqrt((exp(total_log_var) - 1) * exp(2 * mu_raw + total_log_var))
       
     } else {
-      # Standard models (m0, m1, m2)
+      #Defined as expected
       mu <- mu_raw
-      # Total predictive uncertainty (residual error + estimation error)
       sigma <- sqrt(summary(fit)$sigma^2 + pred_obj$se.fit^2)
     }
-    
-    # Calculate scores using our robust function
+    # Calculate scores 
     scores <- calc_scores(y = test_data$count, mu = mu, sigma = sigma, model_name = mod_name)
     
-    # Store result
+    # Store 
     table1_results[[paste(y, mod_name, sep="_")]] <- scores %>% mutate(Split_Year = y)
   }
 }
-
-# Combine and average results
+# Collect results
 table1_final <- bind_rows(table1_results) %>%
   group_by(Model) %>%
   summarise(across(c(RMSE, MAE, DS, IS), mean, na.rm = TRUE))
 
 print(table1_final)
 
-
 #Table 2, CV RMSE and DS by month for final model 
 
-#fitting full models
+#Fit Full models
 m1_full <- lm(models_list$m1, data = cycle_daily_df)
 m2_full <- lm(models_list$m2, data = cycle_daily_df)
 m3_full <- lm(models_list$m3, data = cycle_daily_df)
@@ -379,13 +358,12 @@ table2_final <- bind_rows(table2_results) %>%
 
 #table 3 - trend coefficients from M1 - M3
 
-# 
-# #getting the trend from each model
+# Retrieve trend from each model
 tr1 <- coef(m1_full)[["trend"]]
 tr2 <- coef(m2_full)[["trend"]]
 tr3 <- coef(m3_full)[["trend"]]
-# 
-#building table 3
+
+# Building table 3
 table3_final <- data.frame(
   #defining the rows as the 3 models
   Model = c("M1", "M2", "M3"),
@@ -400,7 +378,6 @@ table3_final <- data.frame(
 
 
 # 5.1 
-
 # test and train
 n = nrow(cycle_daily_df)
 set.seed(1234)
@@ -437,16 +414,16 @@ m2_scores <- function(model, data = test) {
   calc_scores(y = test$count, mu = mu, sigma = sigma)
 }
 
-# table
+# Table
 m2_comparison <- bind_rows(
   "Temp Mean" = m2_scores(M2_Tmean, test),
   "Temp Min"  = m2_scores(M2_Tmin, test),
   "Temp Max"  = m2_scores(M2_Tmax, test),
   .id = "Model")
 
-# estimated marginal effect
-# Extract the coefficients
-# b1 is the linear slope, b2 is the curvature coefficient
+# Estimated marginal effect
+# Extract coeefs
+# b1, linear slope and  b2 is the curvature coefficient
 b1 <- coef(M2_Tmax)["temp_mean"]
 b2 <- coef(M2_Tmax)["I(temp_max^2)"]
 
@@ -455,7 +432,7 @@ b2 <- coef(M2_Tmax)["I(temp_max^2)"]
 increase_5  <- b1 + (2 * b2 * 5)
 increase_15 <- b1 + (2 * b2 * 15)
 
-# 3. Round these for easy reading in your sentence
+# Rounding
 val_5  <- round(increase_5, 0)
 val_15 <- round(increase_15, 0)
 
