@@ -92,6 +92,20 @@ plot_temp_scatter <- ggplot(cycle_daily_df, aes(x = temp_mean, y = count)) +
   ) +
   theme_minimal()
 
+# holiday boxplots
+plot_holiday <- ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
+  geom_boxplot() +
+  labs(title = "Impact of Festive Period on Daily Cycle Count",
+       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count") +
+  theme_minimal()
+
+# COVID variable
+plot_covid <- ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "lm") +
+  labs(title = "Cycling Trends: Non Covid vs. Covid Era") +
+  theme_minimal()
+
 # non trivial plot - festive period
 # Filter for December and calculate the average count for each day across all years
 december_trends <- cycle_daily_df %>%
@@ -172,34 +186,26 @@ gg_diagnostic <- function(model_fort, type = 1, mod_name = "") {
   } + theme_bw()
 }
 
-p_m0_1 <- gg_diagnostic(m0_fort, 1, "m0")
-p_m1_1 <- gg_diagnostic(m1_fort, 1, "m1")
-p_m2_1 <- gg_diagnostic(m2_fort, 1, "m2")
-p_m3_1 <- gg_diagnostic(m3_fort, 1, "m3")
+p_m0_1 <- gg_diagnostic(m0_fort, 1, "M0")
+p_m1_1 <- gg_diagnostic(m1_fort, 1, "M1")
+p_m2_1 <- gg_diagnostic(m2_fort, 1, "M2")
+p_m3_1 <- gg_diagnostic(m3_fort, 1, "M3")
 
-p_m0_2 <- gg_diagnostic(m0_fort, 2, "m0")
-p_m1_2 <- gg_diagnostic(m1_fort, 2, "m1")
-p_m2_2 <- gg_diagnostic(m2_fort, 2, "m2")
-p_m3_2 <- gg_diagnostic(m3_fort, 2, "m3")
+p_m0_2 <- gg_diagnostic(m0_fort, 2, "M0")
+p_m1_2 <- gg_diagnostic(m1_fort, 2, "M1")
+p_m2_2 <- gg_diagnostic(m2_fort, 2, "M2")
+p_m3_2 <- gg_diagnostic(m3_fort, 2, "M3")
 
-p_m0_3 <- gg_diagnostic(m0_fort, 3, "m0")
-p_m1_3 <- gg_diagnostic(m1_fort, 3, "m1")
-p_m2_3 <- gg_diagnostic(m2_fort, 3, "m2")
-p_m3_3<- gg_diagnostic(m3_fort, 3, "m3")
+p_m0_3 <- gg_diagnostic(m0_fort, 3, "M0")
+p_m1_3 <- gg_diagnostic(m1_fort, 3, "M1")
+p_m2_3 <- gg_diagnostic(m2_fort, 3, "M2")
+p_m3_3<- gg_diagnostic(m3_fort, 3, "M3")
 
-p_m0_4<- gg_diagnostic(m0_fort, 4, "m0")
-p_m1_4 <- gg_diagnostic(m1_fort, 4, "m1")
-p_m2_4 <- gg_diagnostic(m2_fort, 4, "m2")
-p_m3_4<- gg_diagnostic(m3_fort, 4, "m3")
+p_m0_4<- gg_diagnostic(m0_fort, 4, "M0")
+p_m1_4 <- gg_diagnostic(m1_fort, 4, "M1")
+p_m2_4 <- gg_diagnostic(m2_fort, 4, "M2")
+p_m3_4<- gg_diagnostic(m3_fort, 4, "M3")
 
-# Inside your CV loop, replace the 'if (mod_name == "m3")' block:
-if (mod_name == "m3") {
-  # Apply bias correction: Mean = exp(mu + sigma^2 / 2) - 1
-  # Here, res_std_error is the sigma of the log-model
-  mu <- exp(mu + (res_std_error^2 / 2)) - 1
-  # Sigma of a log-normal is more complex, but this is a standard approximation:
-  sigma <- sqrt((exp(res_std_error^2) - 1) * exp(2 * pred_obj$fit + res_std_error^2))
-}
 
 # 4. Cross-Validation Functions
 calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
