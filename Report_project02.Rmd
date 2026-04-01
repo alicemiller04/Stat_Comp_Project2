@@ -50,7 +50,7 @@ We can see from table 1 that the number of daily cyclists varies from $1,264$ to
 
 We then plotted a time series of the daily cyclist count over the period of observations. 
 
-```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025.",fig.height = 2, fig.width = 4}
+```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025.",fig.height = 3, fig.width = 5}
 plot_timeseries
 ```
 
@@ -60,7 +60,7 @@ We can see from Figure 1 that there are yearly fluctuations, with peaks and trou
 We then created boxplots of the daily cyclist count by month and by the day of week to observe whether they had any significant impact on the number of daily cyclists. 
 
 
-```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week.", fig.height = 3, fig.width = 4}
+```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week.", fig.height = 5, fig.width = 7}
 grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 
@@ -69,7 +69,7 @@ We can see from Figure 2 that the colder months (October - February) have slight
 
 We then plotted the daily cyclist count against the mean temperature, with the red and blue lines indicating regression and quadratic relationship respectively as seen in Figure 3. 
 
-```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of Daily cyclist count vs mean temperature.", fig.height = 2, fig.width = 4}
+```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of Daily cyclist count vs mean temperature.", fig.height = 3, fig.width = 5}
 plot_temp_scatter
 ```
 
@@ -77,7 +77,7 @@ There is a clear positive correlation between temperature mean and daily cyclist
 
 We noticed that the days with the lowest counts fell between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created a graph to illustrate this over the course of the 5 years. 
 
-```{r plot december, fig.cap="Line Graph of average daily cyclists across the 5 years in decemeber.", fig.height = 2, fig.width = 4}
+```{r plot december, fig.cap="Line Graph of average daily cyclists across the 5 years in decemeber.", fig.height = 3, fig.width = 5}
 plot_december
 
 ```
@@ -112,8 +112,8 @@ For every 1 degree increase in the mean daily temperature, M0 predicts an increa
 
 We then assessed the diagnostic plots for M0.
 
-```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0.", fig.height = 2, fig.width = 8}
-grid.arrange(p_m0_1,p_m0_2, p_m0_3,p_m0_4, ncol = 4)
+```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0.", fig.height = 4, fig.width = 6}
+grid.arrange(p_m0_1,p_m0_2, p_m0_3,p_m0_4, nrow = 2, ncol = 2)
 ```
 
 The linear assumption seems to be validated as we can see from the Scale-Location plot in Figure 6, and there don't appear to be any points with unreasonable leverage. The Residuals vs Fitted plot in Figure 5 shows a mean variance of 0, independent of the fitted values. The residuals show a non-linear pattern, with an arguable 'n' shape above the mean line, indicating there is an underlying non-linear structure yet to be included in our model. The Q-Q plot in Figure 5 demonstrates right skewing and heavy tail in the positive quantiles, indicating that M0 is particularly bad at predicting high count observations. Therefore, the normality assumption for linear regression is violated. 
@@ -133,8 +133,8 @@ Every other month or day is measured as the expected difference in count from th
 We omit the weekend term and numerical version of 'month' to avoid collinearity with their 'factor' versions and because the covariate 'dow' is collinear with 'weekend'.
 
 
-```{r side by side comparison of M0 and M1, fig.cap="Diagnostic Plots for M1", fig.width = 8, fig.height = 2}
-grid.arrange(p_m1_1,p_m1_2,p_m1_3,p_m1_4, nrow = 1, ncol = 4)
+```{r side by side comparison of M0 and M1, fig.cap="Diagnostic Plots for M1", fig.width = 6, fig.height= 4}
+grid.arrange(p_m1_1,p_m1_2,p_m1_3,p_m1_4, nrow = 2, ncol = 2)
 ```
 
 We can see from the Residuals vs Fitted Values plot in Figure 6 that, despite the 'n' pattern about the mean being slightly less pronounced, the mean residual line follows a slight sigmoid shape, suggesting the linear assumption is still violated for M1. The Q-Q plot looks slightly more aligned to the normal line at the lower tail in comparison to M1, suggesting that the prediction for the days with lower cyclist counts has improved. There is now however a point with very large leverage as seen in the Residuals vs Leverage plot. The linear assumption appears to be slightly more justified than with M0, as we can see from the Scale-Location plot.
@@ -147,11 +147,11 @@ $$\epsilon_i \sim N(0, \sigma^2)$$
 
 We can infer from Figure 3 that there is an underlying non-linear relationship between the mean temperature and the daily cyclist count. Hence, replacing the linear 'mean temperature' term with a nonlinear alternative term, the underlying structure may be better explained by the model. We can evaluate this using the following diagnostic plots for M2.
 
-```{r 1st_Diagnostics_of_M1_M2, fig.cap="Diagnostic Plots for M2", fig.height = 2, fig.width = 8}
-grid.arrange(p_m2_1, p_m2_2, p_m2_3, p_m2_4, nrow = 1, ncol = 4)
+```{r 1st_Diagnostics_of_M1_M2, fig.cap="Diagnostic Plots for M2", fig.height = 4, fig.width = 6}
+grid.arrange(p_m2_1, p_m2_2, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
 ```     
 
-The linear assumption still appears to be justified and there is still a point with massive influence. There is not much difference from M1 in the diagnostic plots, suggesting that the explanatory power of M2 is not improved upon M1.
+We can see from Figure 7 that the linear assumption still appears to be justified and there is still a point with massive influence. There is not much difference from M1 in the diagnostic plots, suggesting that the explanatory power of M2 is not improved upon M1.
 
 
 ## Model M3: Logarithmic count with nonlinear temperature
@@ -163,68 +163,72 @@ $$$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
 To mediate the heavy right tailed Q-Q plots seen in the previous models, we apply the log 
-transform to the count response. We added in binary predictor variables - 'is_holiday' and 'is_covid' - introduced and defined during exploratory data analysis. 
+transform to the count response. We added in binary predictor variables - 'is_holiday' and 'is_covid' - introduced and defined during exploratory data analysis. We made the following graphs to justify the validity of adding these predictor variables to M3.
 
 
-```{r Boxplot of holiday, fig.cap="Boxplot of Holiday variable (Dec 24th - 31st)", fig.height = 2, fig.width = 4}
+```{r Boxplot of holiday, fig.cap="Boxplot of 'is_holiday' variable (Dec 24th - 31st)", fig.height = 3, fig.width = 5}
 plot_holiday
-
-# holiday boxplots
-plot_holiday <- ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
-  geom_boxplot() +
-  labs(title = "Impact of Festive Period on Daily Cycle Count",
-       x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count") +
-  theme_minimal()
-
 ```
+We can see from Figure 8 that the median daily cyclist count is significantly lower during the specified festive period. The spread (IQR) of counts is also very small during the festive period, indicating that there are consistently much lower counts during this time. This suggests that it is a valid indicator to include. 
 
-```{r Impact of adding covid, fig.cap="Trend Lines of cyclist counts with and without Covid variable.", fig.width = 4, fig.height = 2}
+```{r Impact of adding covid, fig.cap="Overall trend during lockdown and over the whole period", fig.width = 6, fig.height = 3}
 plot_covid
-# COVID variable
-plot_covid <- ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "lm") +
-  labs(title = "Cycling Trends: Non Covid vs. Covid Era") +
-  theme_minimal()
 
 ```
+We can see from Figure 9 that during the lockdown period, the decline is more pronounced than for the whole time period that the data spans. This indicates that there is an observable effect of Covid on the cyclist count, and that it is justified in adding it into M3. 
 
+We then evaluated the assumptions of M3 through looking at the following diagnostic plots. 
 
-```{r M3 compared to M2}
-grid.arrange(p_m2_1, p_m2_2, p_m3_1, p_m3_2, nrow = 2, ncol = 2)
-grid.arrange(p_m2_3, p_m2_4, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
+```{r Diagnostic plots M3, fig.cap="Diagnostic Plots for M3", fig.height = 4, fig.width = 6}
+grid.arrange(p_m3_1, p_m3_2, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
 ```
+The difference in the linear assumption is negligible compared to the previous models. The Q-Q plot suggests that the normality assumption is more justified than in the previous models. The scale-location plot suggests that M3 displays greater heteroscedasticity, meaning the constant variance assumption is violated more than in M2. There is still a point of high influence as shown in the Residuals vs Leverage plot. 
 
+Our final model is M2. We created a coefficient table for it as follows.
 
+```{r summary for m2} 
+
+cycle_daily_df$month <- factor(cycle_daily_df$month, ordered = FALSE)
+cycle_daily_df$dow <- factor(cycle_daily_df$dow, ordered = FALSE)
+
+# Now re-run your model
+m2 <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
+           factor(month) + factor(dow), data = cycle_daily_df )
+m2_table <- as.data.frame(summary(m2)$coefficients)
+colnames(m2_table) <- c("estimate", "std Error", "t value", "p value")
+
+kable(m2_table, 
+      digits = 4, 
+      caption = "Summary for Model M2") %>%
+  kable_styling(latex_options = c("scale_down", "hold_position"))
+                
+```
 
 # Evaluation
 ## Statistical Performance
-
-<!--
-Required content:
-  1. Table 1: LOYO CV scores for M0-M3.
-  2. Table 2: CV RMSE and DS by month for your final model.
-  3. Discussion: do the scores agree on which model is best? 
-     If not, explain why and state your final model choice explicitly.
--->
 
 Table of the Leave-one-year-out CV scores.
 
 ```{r Table 1 LOYO CV scores for M0-M3}
 
-knitr::kable(table1_final, 
+kable(table1_final, 
              digits = 2, 
-             caption = "Table of the Leave-one-year-out CV scores")
+             caption = "Table of the Leave-one-year-out CV scores")  %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
 Table of the RMSE and DS by month
 
-```{r Table 2 of the RMSE and DS by month}
+```{r Table 2 RMSE and DS by month}
 
-knitr::kable(table2_final, 
+kable(table2_final, 
              digits = 2, 
-             caption = "Table of the RMSE and DS by months")
+             caption = "Table of the RMSE and DS by months")  %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
+Metricdisagreement discussion
+ Discussion: do the scores agree on which model is best? 
+     If not, explain why and state your final model choice explicitly.
 
 ## Practical Performance
 
@@ -239,9 +243,10 @@ The table shows the different score values for model 2, but using 3 different te
 
 ```{r M2 fit with temp_mean, temp_min, and temp_max}
 
-knitr::kable(m2_comparison, 
+kable(m2_comparison, 
              digits = 2,
-             caption = "Model M2 fitted with daily temp mean, temp min, temp max.")
+             caption = "Model M2 fitted with daily temp mean, temp min, temp max.") %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
 The model with temp max in the nonlinear term has the best predictive performance because it has the lowest value for each score.
