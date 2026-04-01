@@ -50,7 +50,7 @@ We can see from table 1 that the number of daily cyclists varies from $1,264$ to
 
 We then plotted a time series of the daily cyclist count over the period of observations. 
 
-```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025.",fig.height = 3, fig.width = 5}
+```{r time series, fig.cap="Time series of daily cyclist counts 2020-2025.",fig.height = 2, fig.width = 4}
 plot_timeseries
 ```
 
@@ -60,7 +60,7 @@ We can see from Figure 1 that there are yearly fluctuations, with peaks and trou
 We then created boxplots of the daily cyclist count by month and by the day of week to observe whether they had any significant impact on the number of daily cyclists. 
 
 
-```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week.", fig.height = 4, fig.width = 5}
+```{r Boxplots of cyclist count by month and day of week, fig.cap="Boxplots of cyclist count by month and day of week.", fig.height = 3, fig.width = 4}
 grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 
@@ -69,7 +69,7 @@ We can see from Figure 2 that the colder months (October - February) have slight
 
 We then plotted the daily cyclist count against the mean temperature, with the red and blue lines indicating regression and quadratic relationship respectively as seen in Figure 3. 
 
-```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of Daily cyclist count vs mean temperature.", fig.height = 3, fig.width = 5}
+```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of Daily cyclist count vs mean temperature.", fig.height = 2, fig.width = 4}
 plot_temp_scatter
 ```
 
@@ -77,7 +77,7 @@ There is a clear positive correlation between temperature mean and daily cyclist
 
 We noticed that the days with the lowest counts fell between Christmas Eve and New Years Eve, presumably due to less commuters on the road. We created a graph to illustrate this over the course of the 5 years. 
 
-```{r plot december, fig.cap="Line Graph of average daily cyclists across the 5 years in decemeber.", fig.height = 3, fig.width = 5}
+```{r plot december, fig.cap="Line Graph of average daily cyclists across the 5 years in decemeber.", fig.height = 2, fig.width = 4}
 plot_december
 
 ```
@@ -88,7 +88,7 @@ The data spans the Covid-19 pandemic, so we added a binary predictor 'is_covid' 
 
 # Baseline model 
 
-We fit an initial linear model, M0, that uses the numeric predictor variables mean temperature, weekend, and month to predict the daily cyclist count. 
+We fit an initial linear model, M0, that uses the numeric variables mean temperature, weekend, and month to predict the daily cyclist count. 
 
 The equation for M0 is:
 
@@ -108,107 +108,80 @@ kable(coef_matrix,
                 
 ```
 
-For every 1 degree increase in the mean daily temperature, M0 predicts an increase of 247 cyclists per day, and predicts a 1247 decrease in cyclist count on weekends compared to weekdays. Since M0 uses month as a numeric predictor, it ignores the fact that cyclist counts generally increase in summer and fall in winter. Currently, the model suggests that there is a decrease of 247 cyclists for each month passing, which is obviously false.
+For every 1 degree increase in the mean daily temperature, M0 predicts an increase of 247 cyclists per day, and predicts a 1247 decrease in cyclist count on weekends compared to weekdays. Currently, the model suggests that there is a decrease of 247 cyclists for each month passing. This is because M0 uses month as a numeric predictor and therefore it ignores the fact that cyclist counts generally increase in summer and fall in winter.
 
-We then assessed the diagnostic plots for M0, which can be seen in figure 5.
+We then assessed the diagnostic plots for M0.
 
-```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0."}
-grid.arrange(p_m0_1,p_m0_2, ncol = 2)
+```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0.", fig.height = 2, fig.width = 8}
+grid.arrange(p_m0_1,p_m0_2, p_m0_3,p_m0_4, ncol = 4)
 ```
 
-The Normal
+The linear assumption seems to be validated as we can see from the Scale-Location plot in Figure 6, and there don't appear to be any points with unreasonable leverage. The Residuals vs Fitted plot in Figure 5 shows a mean variance of 0, independent of the fitted values. The residuals show a non-linear pattern, with an arguable 'n' shape above the mean line, indicating there is an underlying non-linear structure yet to be included in our model. The Q-Q plot in Figure 5 demonstrates right skewing and heavy tail in the positive quantiles, indicating that M0 is particularly bad at predicting high count observations. Therefore, the normality assumption for linear regression is violated. 
 
-Model 0 (m0) shows a mean variance of 0, independent of the fitted values.
-The residuals show a non-linear pattern, with an arguable 'n' shape above the mean line, indicating there is an underlying non-linear structure yet to be included in our model.
+# Proposed Models
+## Model 1: Linear temperature with trend and factor variables
 
-The QQ plot demonstrates right skewing and heavy tail in the positive quantiles - 
-  thus the normality assumption for linear regression is violated.
-This indicates the model is particularly bad at predicting high count observations.
-
-
-# Model M1
-
-We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025.
+We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025, and interprets day of week and month as factor variables rather than numeric variables.
 
 Our proposed equation for M1 (identifiable form) is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-Day 1 (Monday) and month 1 (Jan) are encapsulated in the intercept term $\beta_0$
-Every other month or day is measured as the expected difference in count from the baseline.
-
-
-We investigate m1 over m0 because m1 has the granularity for the effect of different weekdays rather than simplistic weekend or non weekend effects.
-Changing 'month' to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
+The prediction for day 1 (Monday) and month 1 (Jan) are represented by the intercept term $\beta_0$
+Every other month or day is measured as the expected difference in count from the baseline. M1 is an improvement over M0 because M1 takes into account the impact of different weekdays rather than simplistic weekend or non weekend effects. Changing 'month' to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
 We omit the weekend term and numerical version of 'month' to avoid collinearity with their 'factor' versions and because the covariate 'dow' is collinear with 'weekend'.
 
 
-```{r side by side comparison of M0 and M1, fig.cap="Diagnostic Plots for M0 and M1 in grid layout."}
-grid.arrange(p_m0_1,p_m0_2,p_m1_1,p_m1_2, nrow = 2, ncol = 2)
-grid.arrange(p_m0_3, p_m0_4, p_m1_3, p_m1_4, nrow = 2, ncol = 2)
+```{r side by side comparison of M0 and M1, fig.cap="Diagnostic Plots for M1", fig.width = 8, fig.height = 2}
+grid.arrange(p_m1_1,p_m1_2,p_m1_3,p_m1_4, nrow = 1, ncol = 4)
 ```
 
-Plot grid 1:
-Observe in the bottom left of figure 6, the mean residual line follows a slight sigmoid shape, 
-suggesting the linear assumption is still violated for model 1.
-On a positive note, the 'n' pattern about the mean is less pronounced for model 1.
-The bottom right Q-Q plot looks slightly more aligned to the normal line at the lower tail (compared to M0). This suggests the prediction for the low count days is better.
+We can see from the Residuals vs Fitted Values plot in Figure 6 that, despite the 'n' pattern about the mean being slightly less pronounced, the mean residual line follows a slight sigmoid shape, suggesting the linear assumption is still violated for M1. The Q-Q plot looks slightly more aligned to the normal line at the lower tail in comparison to M1, suggesting that the prediction for the days with lower cyclist counts has improved. There is now however a point with very large leverage as seen in the Residuals vs Leverage plot. The linear assumption appears to be slightly more justified than with M0, as we can see from the Scale-Location plot.
 
-Plot grid 2: 
-Observe the leverage and thus influence is larger for the outliers of m1.
-
-## Model M2: Nonlinear temperature
+## Model M2: Quadratic temperature 
 
 Our proposed equation for M2 (identifiable form) is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{temp\_mean}^2_i + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-From the temperature vs count scatter plot, we see there is an underlying some non linear relationship as we can see some curvature.
-Hence, if we add the quadratic 'mean temperature' term to model m1, the underlying structure maybe better covered by the model:
+We can infer from Figure 3 that there is an underlying non-linear relationship between the mean temperature and the daily cyclist count. Hence, replacing the linear 'mean temperature' term with a nonlinear alternative term, the underlying structure may be better explained by the model. We can evaluate this using the following diagnostic plots for M2.
 
-```{r 1st_Diagnostics_of_M1_M2, fig.cap="Residuals vs Fitted and Normal Q−Q Diagnostic Plots for M1 and M2 in grid layout."}
-grid.arrange(p_m1_1, p_m1_2, p_m2_1, p_m2_2, nrow = 2, ncol = 2)
+```{r 1st_Diagnostics_of_M1_M2, fig.cap="Diagnostic Plots for M2", fig.height = 2, fig.width = 8}
+grid.arrange(p_m2_1, p_m2_2, p_m2_3, p_m2_4, nrow = 1, ncol = 4)
 ```     
 
-
-```{r 2nd_Diagnostics_of_M1_M2, fig.cap="Scale−Location and Residuals vs Leverage Diagnostic Plots for M1 and M2 in grid layout."}
-grid.arrange(p_m1_3, p_m1_4, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
-``` 
+The linear assumption still appears to be justified and there is still a point with massive influence. There is not much difference from M1 in the diagnostic plots, suggesting that the explanatory power of M2 is not improved upon M1.
 
 
-M2 shows a general alignment with linear modelling assumptions since there are
-no notable violations.
-Observe both models are almost identical from the diagnostic plots, 
-therefore further comparison may be undertaken using the scores.
-The only noticeable change comes from the leverage of the outliers increasing slightly.
-
-
-## Model M3: [your extension title]
+## Model M3: Logarithmic count with nonlinear temperature
 
 The expression is: 
-$$\log(count_i + 1) = \beta_0 + \beta_1 temp\_mean_i + \beta_2 temp\_mean_i^2 + \beta_3 trend_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(month_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(dow_i = k) + \beta_4 is\_covid_i + \beta_5 is\_holiday_i + \epsilon_i$$
+$$\log(\text{count}_i + 1) = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{temp\_mean}_i^2 + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) +
+$$$$
+\beta_4 \text{is\_covid}_i + \beta_5 \text{is\_holiday}_i + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-To mediate the heavy right tailed QQ plots seen in (m0-2), we apply the log 
-transform to the count response. We addd terms is_covid and is_summer ???
+To mediate the heavy right tailed Q-Q plots seen in the previous models, we apply the log 
+transform to the count response. We added in binary predictor variables - 'is_holiday' and 'is_covid' - introduced and defined during exploratory data analysis. 
 
 
-```{r improvements from adding is holiday variable to m3, fig.cap="Boxplot of Holiday variable (Dec 24th - 31st)."}
+```{r Boxplot of holiday, fig.cap="Boxplot of Holiday variable (Dec 24th - 31st)", fig.height = 2, fig.width = 4}
+plot_holiday
 
 # holiday boxplots
-ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
-  geom_boxplot(fill = "lightblue") +
-  labs(title = "Impact of Holidays on Daily Cycle Count",
+plot_holiday <- ggplot(cycle_daily_df, aes(x = factor(is_holiday), y = count)) +
+  geom_boxplot() +
+  labs(title = "Impact of Festive Period on Daily Cycle Count",
        x = "Is Holiday (0=No, 1=Yes)", y = "Cycle Count") +
   theme_minimal()
 
 ```
 
-```{r improvements from adding is covid variable to m3, fig.cap="Trend Lines of cyclist counts with and without Covid variable."}
-
+```{r Impact of adding covid, fig.cap="Trend Lines of cyclist counts with and without Covid variable.", fig.width = 4, fig.height = 2}
+plot_covid
 # COVID variable
-ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
+plot_covid <- ggplot(cycle_daily_df, aes(x = date, y = count, color = factor(is_covid))) +
   geom_point(alpha = 0.3) +
   geom_smooth(method = "lm") +
   labs(title = "Cycling Trends: Non Covid vs. Covid Era") +
