@@ -137,7 +137,7 @@ We omit the weekend term and numerical version of 'month' to avoid collinearity 
 grid.arrange(p_m1_1,p_m1_2,p_m1_3,p_m1_4, nrow = 2, ncol = 2)
 ```
 
-We can see from the Residuals vs Fitted Values plot in Figure 6 that, despite the 'n' pattern about the mean being slightly less pronounced, the mean residual line follows a slight sigmoid shape, suggesting the linear assumption is still violated for M1. The Q-Q plot looks slightly more aligned to the normal line at the lower tail in comparison to M1, suggesting that the prediction for the days with lower cyclist counts has improved. There is now however a point with very large leverage as seen in the Residuals vs Leverage plot. The linear assumption appears to be slightly more justified than with M0, as we can see from the Scale-Location plot.
+We can see from the Residuals vs Fitted Values plot in Figure 6 that, despite the 'n' pattern about the mean being slightly less pronounced, the mean residual line follows a slight sigmoid shape, suggesting the linear assumption is still violated for M1. The Q-Q plot looks slightly more aligned to the normal line at the lower tail in comparison to M1, suggesting that the prediction for the days with lower cyclist counts has improved. There is now however a point with relatively larger leverage as seen in the Residuals vs Leverage plot. The linear assumption appears to be slightly more justified than with M0, as we can see from the Scale-Location plot.
 
 ## Model M2: Quadratic temperature 
 
@@ -151,7 +151,7 @@ We can infer from Figure 3 that there is an underlying non-linear relationship b
 grid.arrange(p_m2_1, p_m2_2, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
 ```     
 
-We can see from Figure 7 that the linear assumption still appears to be justified and there is still a point with massive influence. There is not much difference from M1 in the diagnostic plots, suggesting that the explanatory power of M2 is not improved upon M1.
+We can see from Figure 7 that the linear assumption still appears to be justified and the outlier's leverage has more than doubled. There is not much difference from M1 in the diagnostic plots, suggesting that the explanatory power of M2 is not improved upon M1.
 
 
 ## Model M3: Logarithmic count with nonlinear temperature
@@ -185,7 +185,7 @@ We then evaluated the assumptions of M3 through looking at the following diagnos
 grid.arrange(p_m3_1, p_m3_2, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
 ```
 
-The difference in the linear assumption is negligible compared to the previous models. The Q-Q plot suggests that the normality assumption is more justified than in the previous models. The scale-location plot suggests that M3 displays greater heteroscedasticity, meaning the constant variance assumption is violated more than in M2. There is still a point of high influence as shown in the Residuals vs Leverage plot. 
+The difference in the linear assumption is negligible compared to the previous models. The Q-Q plot suggests that the normality assumption is more justified than in the previous models. The scale-location plot suggests that M3 displays heteroscedasticity (unlike M2), meaning the constant variance assumption is violated. There remains a point of noticeably higher influence, as shown in the Residuals vs Leverage plot. 
 
 Our final model is M2. We created a coefficient table for it as follows.
 
