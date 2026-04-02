@@ -65,7 +65,8 @@ grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 
 
-We can see from Figure 2 that the colder months (October - February) have slightly lower cyclist counts, with the other months remaining relatively constant. There are a lot of outliers, especially in Spring. Observations with unusually high cyclist counts could be attributed to special events such as races, bank holidays, and exceptionally sunny days. Outside of winter, the month doesn't appear to have a tremendous impact on the median daily cyclist count. The second boxplot in Figure 2 indicates that there tends to be less cyclists on Mondays and Sundays, with the other days appearing relatively constant. 
+We can see from Figure 2 that the colder months (October - February) have slightly lower cyclist counts, with the other months remaining relatively constant. There are a lot of outliers, especially in Spring. Observations with unusually high cyclist counts could be attributed to special events such as races, bank holidays, and exceptionally sunny days. Outside of winter, the month doesn't appear to have a tremendous impact on the median daily cyclist count. August sees instances of high count outliers, which may come from the combined effect of the Fringe Festival on fine weather days and the cycling event mentioned previously.
+The second boxplot in Figure 2 indicates that there tends to be less cyclists on Mondays and Sundays, with the other days appearing relatively constant. 
 
 We then plotted the daily cyclist count against the mean temperature, with the red and blue lines indicating regression and quadratic relationship respectively as seen in Figure 3. 
 
@@ -262,7 +263,7 @@ The month with the lowest RMSE and DS is July, followed closely by June. This in
 
 The month with the highest RMSE and DS is April, followed by March. This indicates poor fit of M2 during March and April, and a worse prediction of the mean cycle count and variation in count. The weather is very volatile during spring, particularly concerning rainfall. For example, a day with higher temperatures but heavy rainfall is likely to see a drop in cyclists, but the data doesn't account for this. This is therefore a limitation in the data. 
 
-The scores for August are considerably higher than the scores for the other Summer months. We believe this is due to the cycling event in August 2022 introduced earlier, which saw massively higher cyclist counts than in other years. More generally, the accuracy may be lower in certain months as the model does not account for holidays and special events, such as the cycling event. This is a limitation of both the model and data, as there could be more data on outside factors, and the model could be updated to account for these cases.
+The scores for August are considerably higher than the scores for the other Summer months. We believe this is due to the cycling event in August 2022 introduced earlier, which saw massively higher cyclist counts than in other years. More generally, the accuracy may be lower in certain months as the model does not account for holidays and special events, such as the cycling event or Fringe Festival. This is a limitation of both the model and data, as there could be more data on outside factors, and the model could be updated to account for these cases.
 
 ### Long-term trend and extrapolation
 
