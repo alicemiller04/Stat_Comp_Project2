@@ -374,14 +374,21 @@ print(table2_final)
 # Retrieve trend from each model
 tr1 <- coef(m1_full)[["trend"]]
 tr2 <- coef(m2_full)[["trend"]]
-tr3 <- coef(m3_full)[["trend"]]
+tr3_log <- coef(m3_full)[["trend"]]
+
+#calculating average 
+avg_daily_count <- mean(cycle_daily_df$count, na.rm = TRUE)
+
+#Calculating the annual and daily changes for M3 (average count * percent change over a year) then divide by 365 for daily
+annual_m3 <- avg_daily_count * (exp(tr3_log * 365) - 1)
+daily_m3 <- ann_change_m3_cyclists / 365
 
 # Building table 3
 table3_final <- data.frame(
   #defining the rows as the 3 models
   Model = c("M1", "M2", "M3"),
-  `Daily change (cyclists/day)` = c(tr1, tr2, tr3), #defining cyclists per day
-  `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, tr3 * 365), #defining cyclists per year
+  `Daily change (cyclists/day)` = c(tr1, tr2, daily_m3), #defining cyclists per day
+  `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, annual_m3), #defining cyclists per year
   check.names = FALSE
 ) %>%
   mutate(
@@ -389,7 +396,7 @@ table3_final <- data.frame(
     `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
   )
 
-
+table3_final
 # 5.1 
 # test and train
 n = nrow(cycle_daily_df)
