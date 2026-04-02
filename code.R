@@ -381,7 +381,7 @@ avg_daily_count <- mean(cycle_daily_df$count, na.rm = TRUE)
 
 #Calculating the annual and daily changes for M3 (average count * percent change over a year) then divide by 365 for daily
 annual_m3 <- avg_daily_count * (exp(tr3_log * 365) - 1)
-daily_m3 <- ann_change_m3_cyclists / 365
+daily_m3 <- annual_m3 / 365
 
 # Building table 3
 table3_final <- data.frame(
