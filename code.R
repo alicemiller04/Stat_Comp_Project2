@@ -485,7 +485,7 @@ extrapolation_plot <- ggplot(extrapolation_df, aes(x = date, y = predicted_count
   theme_minimal() +
   #adding lines to represent the thresholds
   geom_hline(yintercept = 10000, color = "red", linetype = "dashed") +
-  geom_hline(yintercept = 5000, color = "red", linetype = "dashed") + 
+  geom_hline(yintercept = 5000, color = "blue", linetype = "dashed") + 
   #adding the labels to show the date of intersection
   annotate("text", x = as.Date("2027-01-01"), y = 10400, 
            label = intersect_10k, color = "red", hjust = 0) +
