@@ -301,7 +301,6 @@ We created a plot projecting demand forward to 2035 using Model M2. To provide a
 
 ```{r plot extrapolation, fig.cap="Plot projecting demand forward to 2035, for a Wednesday in July of mean temperature", fig.height = 3, fig.width = 5}
 extrapolation_plot
-
 ```
 
 While July typically sees peak cycling volumes, the model indicates a downward trajectory. As shown in Figure 11, the projected daily count begins at approximately 15,000 in 2020 and decreases to roughly 5000 by 2035. At this current rate of decline, mean daily counts under summer weekday conditions are expected to reach the 10,000 cyclist threshold on the 2nd of February 2027, and the 5000 cyclist threshold on the 26th of May 2034. 
