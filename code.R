@@ -490,7 +490,7 @@ extrapolation_plot <- ggplot(extrapolation_df, aes(x = date, y = predicted_count
   annotate("text", x = as.Date("2027-01-01"), y = 10400, 
            label = intersect_10k, color = "red", hjust = 0,  vjust = -0.5) +
   
-  annotate("text", x = as.Date("2033-06-01"), y = 5400, 
+  annotate("text", x = as.Date("2033-01-01"), y = 5400, 
            label = intersect_5k, color = "blue", hjust = 0, vjust = -0.5)
 
 
