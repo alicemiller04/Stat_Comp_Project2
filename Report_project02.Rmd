@@ -192,6 +192,7 @@ Our final model is M2. We created a coefficient table for it as follows.
 
 ```{r summary for m2} 
 
+# should this be in code.r?
 cycle_daily_df$month <- factor(cycle_daily_df$month, ordered = FALSE)
 cycle_daily_df$dow <- factor(cycle_daily_df$dow, ordered = FALSE)
 
@@ -241,7 +242,7 @@ kable(table2_final,
 
 ### Temperature effects and nonlinearlity
 
-The following table fits M2 three times, using temp mean, temp min and temp max in turn as the basis for the quadratic temperature term, and reports the scores. 
+The following table fits M2 three times, using temp mean, temp min and temp max in turn as the basis for the temperature terms, and reports the scores. 
 
 ```{r M2 fit scores with temp_mean, temp_min, and temp_max}
 
@@ -310,6 +311,21 @@ This extrapolation may not hold in practice because it doesn't take into account
 
 
 ### Identifying a poorly fit period
+
+To examine the residuals of the model we created figure 12.
+
+```{r plot residuals vs time, fig.cap="Plot of Residuals vs Time, coloured by year", fig.height = 3, fig.width = 6}
+plot_residuals_years
+```
+
+The model is noticeable under predicting the daily counts for April 2022. From figure 12 we can infer that the actual cyclist count was over 10,000 more than what M2 predicted.
+
+During this month, the model recorded a mean signed residual of +8,033 and an RMSE of 10,528.
+
+Because the mean residual is positive, the model systematically under-predicts cycling count during this period. The magnitude of the RMSE is more than double the model's overall average (4,588), indicating a significant failure to capture the actual cycling volume.
+
+This failure is likely due to the Pedal on Parliament mass-cycling event held in Edinburgh in April 2022. Such one-off events create massive surges in cyclist counts that are not explained by factors in the dataset. From a planning perspective this highlights a limitation of the model. While it is effective for baseline commuter trends, it cannot account for significant events that massively increases the amount of cyclists on the roads.
+
 
 ### Original diagnostic plot
 

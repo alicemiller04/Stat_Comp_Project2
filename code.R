@@ -475,6 +475,60 @@ extrapolation_plot <- ggplot(extrapolation_df, aes(x = date, y = predicted_count
            label = intersect_5k, color = "blue", hjust = 0, vjust = -0.5)
 
 
+# plot option 1
+# 5.4 Identifying a poorly-fit period: Residuals over time
+# Calculate residuals for the entire dataset using M2
+cycle_daily_df <- cycle_daily_df %>%
+  mutate(residuals = count - predict(m2, newdata = .))
+
+# The Residual Time Series Plot
+plot_residuals_time <- ggplot(cycle_daily_df, aes(x = date, y = residuals)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") + # Zero-line for reference
+  geom_point(aes(color = factor(year)), alpha = 0.5) + # Color by year to spot trends
+  geom_smooth(color = "black", method = "loess", span = 0.1) + # Local smoother to show bias
+  scale_x_date(
+    date_breaks = "1 year",      
+    date_labels = "%Y") +
+  labs(
+    title = "Model M2 Residuals Over Time (2020-2025)",
+    x = "Date",
+    y = "Residuals",
+    color = "Year"
+  ) +
+  theme_minimal()
+
+# Plot option 2
+cycle_daily_df <- cycle_daily_df %>%
+  mutate(
+    residuals = count - predict(m2, newdata = .),
+    month_numeric = as.numeric(month(date)) + (day(date)-1)/31
+  )
+
+plot_residuals_years <- ggplot(cycle_daily_df, 
+                                 aes(x = month_numeric, y = residuals, group = year, color = factor(year))) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black", linewidth = 0.8) +
+  geom_smooth(method = "loess", span = 0.2, se = FALSE, linewidth = 1.1) +
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +
+  scale_color_discrete(name = "Year") +
+  labs(
+    title = "Residuals vs Time for each year plot over months",
+    x = "Month",
+    y = "Residuals"
+  ) +
+  theme_minimal()
+
+# Isolating the poorly fit period (April 2022)
+april_2022_data <- cycle_daily_df %>%
+  filter(year == 2022, month == "Apr")
+
+# Calculate residuals using m2
+apr_preds <- predict(m2, newdata = april_2022_data)
+apr_residuals <- april_2022_data$count - apr_preds
+
+# Mean Residual and RMSE
+mean_res_apr22 <- mean(apr_residuals)
+rmse_apr22 <- sqrt(mean(apr_residuals^2))
+
 
 # Interesting diagnostic plot 
 
