@@ -456,3 +456,42 @@ increase_15 <- b1 + (2 * b2 * 15)
 val_5  <- round(increase_5, 0)
 val_15 <- round(increase_15, 0)
 
+#Extrapolation for 5.3
+#defining the dates for the plot, using month as july as lowest scores and day as wednesday
+future_dates <- seq(as.Date("2020-01-01"), as.Date("2035-12-31"), by = "day")
+extrapolation_df <- data.frame(date = future_dates, trend= as.numeric(future_dates - as.Date("2020-01-01")),
+                 temp_mean = mean(cycle_daily_df$temp_mean, na.rm = TRUE),
+                 month = "Jul", levels = levels(cycle_daily_df$month), dow = factor("Wed", levels = levels(cycle_daily_df$dow)))
+
+#predicting using m2
+extrapolation_df$predicted_count <- predict(m2_full, newdata = extrapolation_df)
+
+#finding the date of 10k intersection
+intersect_10k <- extrapolation_df %>%
+  filter(abs(predicted_count - 10000) == min(abs(predicted_count - 10000))) %>%
+  pull(date)
+
+# finding the date for the 5k intersection
+intersect_5k <- extrapolation_df %>%
+  filter(abs(predicted_count - 5000) == min(abs(predicted_count - 5000))) %>%
+  pull(date)
+
+#plotting the extrapolation plot 
+extrapolation_plot <- ggplot(extrapolation_df, aes(x = date, y = predicted_count)) +
+  geom_line() + 
+  labs(title = "Projected Cycling Demand to 2035 using Model M2",
+                     subtitle = "Holding weather and seasonality constant",
+                     x = "Year", y = "Projected Daily Count") +
+  theme_minimal() +
+  #adding lines to represent the thresholds
+  geom_hline(yintercept = 10000, color = "red", linetype = "dashed") +
+  geom_hline(yintercept = 5000, color = "red", linetype = "dashed") + 
+  #adding the labels to show the date of intersection
+  annotate("text", x = as.Date("2027-01-01"), y = 10400, 
+           label = intersect_10k, color = "red", hjust = 0) +
+  
+  annotate("text", x = as.Date("2034-01-01"), y = 5400, 
+           label = intersect_5k, color = "blue", hjust = 0)
+
+
+
