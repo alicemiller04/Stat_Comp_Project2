@@ -262,15 +262,6 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
 }
 
 # 5. Leave-One-Year-Out CV Loop 
-
-# Define the named list
-models_list <- list(
-  m0 = formula(m0),
-  m1 = formula(m1),
-  m2 = formula(m2),
-  m3 = formula(m3)
-)
-
 years <- sort(unique(cycle_daily_df$year))
 table1_results <- list()
 
@@ -367,36 +358,6 @@ table2_final <- bind_rows(table2_results) %>%
 
 print(table2_final)
 
-
-
-#table 3 - trend coefficients from M1 - M3
-
-# Retrieve trend from each model
-tr1 <- coef(m1_full)[["trend"]]
-tr2 <- coef(m2_full)[["trend"]]
-tr3_log <- coef(m3_full)[["trend"]]
-
-#calculating average 
-avg_daily_count <- mean(cycle_daily_df$count, na.rm = TRUE)
-
-#Calculating the annual and daily changes for M3 (average count * percent change over a year) then divide by 365 for daily
-annual_m3 <- avg_daily_count * (exp(tr3_log * 365) - 1)
-daily_m3 <- annual_m3 / 365
-
-# Building table 3
-table3_final <- data.frame(
-  #defining the rows as the 3 models
-  Model = c("M1", "M2", "M3"),
-  `Daily change (cyclists/day)` = c(tr1, tr2, daily_m3), #defining cyclists per day
-  `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, annual_m3), #defining cyclists per year
-  check.names = FALSE
-) %>%
-  mutate(
-    `Daily change (cyclists/day)` = round(`Daily change (cyclists/day)`, 3), #rounding to 3
-    `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
-  )
-
-table3_final
 # 5.1 
 # test and train
 n = nrow(cycle_daily_df)
@@ -456,6 +417,36 @@ increase_15 <- b1 + (2 * b2 * 15)
 val_5  <- round(increase_5, 0)
 val_15 <- round(increase_15, 0)
 
+# 5.3
+#table 3 - trend coefficients from M1 - M3
+
+# Retrieve trend from each model
+tr1 <- coef(m1_full)[["trend"]]
+tr2 <- coef(m2_full)[["trend"]]
+tr3_log <- coef(m3_full)[["trend"]]
+
+#calculating average 
+avg_daily_count <- mean(cycle_daily_df$count, na.rm = TRUE)
+
+#Calculating the annual and daily changes for M3 (average count * percent change over a year) then divide by 365 for daily
+annual_m3 <- avg_daily_count * (exp(tr3_log * 365) - 1)
+daily_m3 <- annual_m3 / 365
+
+# Building table 3
+table3_final <- data.frame(
+  #defining the rows as the 3 models
+  Model = c("M1", "M2", "M3"),
+  `Daily change (cyclists/day)` = c(tr1, tr2, daily_m3), #defining cyclists per day
+  `Annual change (cyclists/year)` = c(tr1 * 365, tr2 * 365, annual_m3), #defining cyclists per year
+  check.names = FALSE
+) %>%
+  mutate(
+    `Daily change (cyclists/day)` = round(`Daily change (cyclists/day)`, 3), #rounding to 3
+    `Annual change (cyclists/year)` = round(`Annual change (cyclists/year)`, 0) #rounding to 0
+  )
+
+table3_final
+
 #Extrapolation for 5.3
 #defining the dates for the plot, using month as july as lowest scores and day as wednesday
 future_dates <- seq(as.Date("2020-01-01"), as.Date("2035-12-31"), by = "day")
@@ -494,4 +485,6 @@ extrapolation_plot <- ggplot(extrapolation_df, aes(x = date, y = predicted_count
            label = intersect_5k, color = "blue", hjust = 0, vjust = -0.5)
 
 
+
+# Interesting diagnostic plot 
 
