@@ -251,11 +251,11 @@ kable(m2_comparison,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-The model fit with the minimum daily temperature has the highest scores, and the model with maximum temperature has lower scores than the other two. The differences between the scores for the model fit with the mean and maximum temperatures don't differ greatly. This indicates that the predictive performance is best when the maximum temperature is used as the basis for the quadratic temperature term. 
+The model fit with the minimum daily temperature has the lowest scores, and the model with maximum temperature has the highest scores. The differences between the scores for the model fit with the mean and minimum temperatures don't differ greatly (especially the DS score which appears the same to 2 d.p). This indicates that the predictive performance is best when the minimum temperature is used as the basis for the temperature terms. 
 
-At $5 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 116 additional cyclists.
+At $5^\circ$c, a $1^\circ$c increase is associated with approximately 46 additional cyclists.
 
-At $15 ^\circ$ c,a $1 ^\circ$ c increase is associated with approximately 161 additional cyclists.
+At $15^\circ$c, a $1 ^\circ$c increase is associated with approximately 200 fewer cyclists. Which is expected based on the quadratic line beginning to curve downwards at $15^\circ$c in figure 3, implying that at higher temperatures, an increase results in fewer cyclists. 
 
 ### Seasonal Prediction Accuracy
 

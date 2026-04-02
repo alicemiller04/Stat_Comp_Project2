@@ -373,20 +373,14 @@ M2_Tmean <-lm(count ~ temp_mean + I(temp_mean^2) + trend +
                 
                 factor(month) + factor(dow), data = train )
 
-M2_Tmin <- lm(count ~ temp_mean + I(temp_min^2) + trend + 
+M2_Tmin <- lm(count ~ temp_min + I(temp_min^2) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
-M2_Tmax <- lm(count ~ temp_mean + I(temp_max^2) + trend + 
+M2_Tmax <- lm(count ~ temp_max + I(temp_max^2) + trend + 
                 
                 factor(month) + factor(dow), data = train )
 
-b1 <- coef(M2_Tmax)["temp_max"]
-b2 <- coef(M2_Tmax)["I(temp_max^2)"]
-
-# Slope at 5C and 15C
-val_5  <- round(b1 + (2 * b2 * 5), 0)
-val_15 <- round(b1 + (2 * b2 * 15), 0)
 
 m2_scores <- function(model, data = test) {
   mu <- predict(model, data = test)
@@ -402,20 +396,16 @@ m2_comparison <- bind_rows(
   "Temp Max"  = m2_scores(M2_Tmax, test),
   .id = "Model")
 
-# Estimated marginal effect
-# Extract coeefs
+# Estimated marginal effect with temp_min
 # b1, linear slope and  b2 is the curvature coefficient
-b1 <- coef(M2_Tmax)["temp_mean"]
-b2 <- coef(M2_Tmax)["I(temp_max^2)"]
+b1 <- coef(M2_Tmin)["temp_min"]
+b2 <- coef(M2_Tmin)["I(temp_min^2)"]
 
 # Calculate the Slope at 5C and 15C
 # Formula: Slope = b1 + (2 * b2 * Temperature)
-increase_5  <- b1 + (2 * b2 * 5)
-increase_15 <- b1 + (2 * b2 * 15)
+effect_at_5  = b1 + (2 * b2 * 5)
+effect_at_15 = b1 + (2 * b2 * 15)
 
-# Rounding
-val_5  <- round(increase_5, 0)
-val_15 <- round(increase_15, 0)
 
 # 5.3
 #table 3 - trend coefficients from M1 - M3
