@@ -266,6 +266,8 @@ The scores for August are considerably higher than the scores for the other Summ
 
 ### Long-term trend and extrapolation
 
+$\textbf{Annual Growth Rate}$ 
+
 We created a table showing the estimated daily and annual change of cyclists over time for each model. 
 
 ```{r Trend coefficients from M1-M3}
@@ -274,19 +276,37 @@ kable(table3_final,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-The estimated annual change in daily cyclist count for our final model, M2, is -692. This means that for each year that passes, there is predicted to be 692 fewer daily cyclists. The predicted number of cyclists on the first day of observations (1st January 2020) is 12463. Therefore, the daily cyclist count is estimated to drop by $5.55 \%$ per year. If this trend were to continue, then the daily cyclist count would half within 13 years, and would drop to 0 within 200 years. Additionally, the trend coefficient for M0 has a p-value very close to zero (under 0.01), suggesting statistical significance.  
+The estimated annual change in daily cyclist count for our final model, M2, is -683. This means that for each year that passes, there is predicted to be 683 fewer daily cyclists. The predicted number of cyclists on the first day of observations (1st January 2020) is 12,463. Therefore, the daily cyclist count is estimated to drop by $5.48 \%$ per year. If this trend were to continue, then the daily cyclist count would half within 9 to 10 years.
 
-The estimated trend does change across M1, M2, and M3. The coefficient becomes less negative, but not by much. This indicates that the number of days since the beginning of observations does have an impact on the annual trend, so it is a robust estimator. ***NEED TO CHANGE BECAUSE M3 TREND STUFF IS WRONG*****
+Additionally, the trend coefficient for all of the models have extremely small p-values (less than 0.01). This provides strong evidence that the downward trend observed in the daily cyclist count is not random, but is instead an observable decline in cycling demand over the 5 year period. 
 
-The linear trend is a reasonable assumption, since the effect of Covid on cycling is only pronounced during the lockdown, which spanned only a year. As we can see in Figure 9, the shape still follows that of the other years, with a decrease of daily cycling count in winter and highs in summer. Furthermore, some people may have been working from home and therefore not commuting, whilst others may have taken up cycling to avoid public transport. In the absence of other data, it is difficult to predict the effect of Covid. Including a Covid indicator in M3 does(n't) change the trend coefficient by ... ***ADD in***
+$\textbf{Model consistency}$ 
 
-We created a plot projecting demand forwards to 2035, holding weather and seasonality constant, as follows.
+M1 and M2 produced similar results, with annual declines of -692 and -683 respectively. This suggests that the trend estimate is robust even when accounting for the quadratic effect of temperature, and the months and days of week as factor variables. M3, the log model, shows a steeper decline of -887 cyclists per year, approximately 30% lower than M2.
 
-***PLOT***
+This difference is likely due to the logarithmic scale  in M3, which is more sensitive to relative percentage changes. Additionally, M3 includes indicators for the Covid lockdown and festive holidays, so accounts for the specific variance associated with these periods to isolate the downward trend. 
 
-At the current rate, the mean daily counts under summer weekday conditions would be expected to reach 5000 cyclists a day in ***add***
+Despite the variations in magnitude, the fact that the trend remains negative and highly significant across all models demonstrates that the downward trend is robust. 
 
-This extrapolation may not hold in practice because it doesn't take into account rising population counts, a removal of the under 22 free bus scheme, and implementation of further Low Emission Zones, and rising petrol prices.  
+$\textbf{Covid Distortion}$ 
+
+The linear trend is a reasonable baseline assumption for the 2020-2025 period, as the most disruptive impact of the lockdown was concentrated within a one-year window. As shown in Figure 9, the fundamental yearly structure with winter troughs and summer peaks remained consistent throughout the lockdown period. Additionally, some people may have been working from home and therefore not commuting, whilst others may have taken up cycling to avoid public transport. Despite this, the overall time-series suggests that these fluctuations did not fundamentally affect the long-term trajectory of the data. 
+
+Including a Covid indicator in M3 does change the trend coefficient significantly. In our final model, M2, which does not account specifically for Covid, the daily decline was -1.872 cyclists. Once the Covid indicator was added, the daily trend coefficient shifted to -2.431. This suggests that once we account for this specific period, the underlying daily decline is actually steeper than the other models suggest. To ensure that the shift wasn't purely due to the 'is_holiday' predictor, we fit M3 without it. The findings remained consistent, confirming that the lockdown period is the primary factor distorting the long-term linear trend estimate. 
+
+$\textbf{Extrapolation}$ 
+
+We created a plot projecting demand forward to 2035 using Model M2. To provide a better scenario for planning, we held weather and seasonality constant, using a Wednesday in July at the mean temperature. We already established that M2 has the best predictive power during July as the variation in daily cyclists is comparatively low. 
+
+
+```{r plot extrapolation, fig.cap="Plot projecting demand forward to 2035, for a Wednesday in July of mean temperature", fig.height = 3, fig.width = 5}
+extrapolation_plot
+
+```
+
+While July typically sees peak cycling volumes, the model indicates a downward trajectory. As shown in Figure 11, the projected daily count begins at approximately 15,000 in 2020 and decreases to roughly 5000 by 2035. At this current rate of decline, mean daily counts under summer weekday conditions are expected to reach the 10,000 cyclist threshold on the 2nd of February 2027, and the 5000 cyclist threshold on the 26th of May 2034. 
+
+This extrapolation may not hold in practice because it doesn't take into account other factors. The implementation of further Low Emission Zones and rising petrol prices may increase the relative cost of driving, incentivising people to take up cycling as a means of transport. Additionally, the under 22 free bus scheme in Scotland may be removed, pushing young people to cycle more often. General population growth in Edinburgh could also lead to more people cycling daily. 
 
 
 ### Identifying a poorly fit period
