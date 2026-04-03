@@ -261,6 +261,16 @@ calc_scores <- function(y, mu, sigma, alpha = 0.05, model_name = "Model") {
   ))
 }
 
+#summary table for M2 final model 
+cycle_daily_df$month <- factor(cycle_daily_df$month, ordered = FALSE)
+cycle_daily_df$dow <- factor(cycle_daily_df$dow, ordered = FALSE)
+
+m2new <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
+              factor(month) + factor(dow), data = cycle_daily_df )
+m2_table <- as.data.frame(summary(m2new)$coefficients)
+colnames(m2_table) <- c("estimate", "std Error", "t value", "p value")
+
+
 # 5. Leave-One-Year-Out CV Loop 
 years <- sort(unique(cycle_daily_df$year))
 table1_results <- list()
