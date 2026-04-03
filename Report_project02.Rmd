@@ -149,7 +149,7 @@ $$\epsilon_i \sim N(0, \sigma^2)$$
 M3 applies a log-transform to the count response to mitigate the heavy right-tailed Q-Q plots observed in previous models. Binary predictors 'is_holiday' and 'is_covid' are justified by Figures 8 and 9.
 
 
-```{r}
+```{r plot holidays + covid ,fig.cap= "Comparison of Holiday (left) and Covid (right) effects", fig.height = 4, fig.width = 10}
 plot_holiday + plot_covid
 ```
 
