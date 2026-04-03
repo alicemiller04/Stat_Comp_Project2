@@ -522,9 +522,10 @@ faceted_cooks_plot <- ggplot(cycle_daily_df, aes(x = year, y = cooks_d)) +
   labs(
     title = "Faceted Cook's Distance by Month",
     subtitle = "Influential observations across years",
-    x = "Year",
     y = "Cook's Distance"
   ) +
+  scale_x_continuous(breaks = seq(min(cycle_daily_df$year), 
+                                  max(cycle_daily_df$year), by = 2)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1), 
