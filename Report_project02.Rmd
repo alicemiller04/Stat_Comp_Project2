@@ -184,7 +184,7 @@ Table 3 shows a baseline of 6,990 cyclists (January Mondays at 0$^{\circ}C$. The
 # Evaluation
 ## Statistical Performance
 
-We found the following error scores for each model: root mean squared, mean absolute error, Dawid-Sebastiani score, and interval score. For each year in 2020-2025, we found the scores when that year was removed from the training data and used as the test data, and then found the average score for each model. 
+We found the following error scores for each model: root mean squared, mean absolute error, Dawid-Sebastiani score, and interval score. For each year, we found the scores when that year was removed from the training data and used as the test data, and then found the average score for each model. 
 
 
 ```{r Table 1 LOYO CV scores for M0-M3}
@@ -195,8 +195,7 @@ kable(table1_final,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-Since these scores are representative of various errors in the models, lower scores are preferable.
-We can see from Table 4 that M2 has the lowest score for RMSE, which indicates that M2 fits the dataset the best. M2 also has the lowest score for MAE, suggesting it is less sensitive to extreme outliers, and IS, demonstrating that M2 produces narrow, specific intervals that include the true count most of the time. M0 has a lower DS than M2 by 0.02, suggesting it is slightly better at predicting the mean and variance of the daily cyclist count. All of the DS scores are very close to each other, and we already established that M0 is the worst model as it doesn't take any quadratic effects of temperature, or the fact that there are factor variables, into account. 
+We can see from Table 4 that M2 has the lowest score for RMSE, indicating M2 fits the dataset best. M2 also has the lowest score for MAE, suggesting it is less sensitive to extreme outliers. The low IS demonstrates that M2 produces narrow, specific intervals that include the true count most of the time. M0 has a lower DS than M2 by 0.02, suggesting it is slightly better at predicting the mean and variance of the daily cyclist count.However all of the DS scores are very close, and we established that M0 is the worst model as it doesn't take any quadratic effects of temperature, or the fact that there are factor variables.
 
 This was the basis for us choosing M2 as our final model. 
 
