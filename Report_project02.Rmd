@@ -329,7 +329,7 @@ This under-fit is likely due to the Edinburgh International Science Festival tak
 
 We created a plot of Cook's Distance over time to show the degree of influence that each month exerts on the model, with lines seperated by year. 
 
-```{r cooks distance plot over time, fig.cap="Plot of Cook's distance over time", fig.height = 3, fig.width = 6}
+```{r cooks distance plot over time, fig.cap="Plot of Cook's distance over time", fig.height = 4, fig.width = 6}
 faceted_cooks_plot
 ```
 
