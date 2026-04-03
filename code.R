@@ -475,27 +475,6 @@ extrapolation_plot <- ggplot(extrapolation_df, aes(x = date, y = predicted_count
            label = intersect_5k, color = "blue", hjust = 0, vjust = -0.5)
 
 
-# plot option 1
-# 5.4 Identifying a poorly-fit period: Residuals over time
-# Calculate residuals for the entire dataset using M2
-cycle_daily_df <- cycle_daily_df %>%
-  mutate(residuals = count - predict(m2, newdata = .))
-
-# The Residual Time Series Plot
-plot_residuals_time <- ggplot(cycle_daily_df, aes(x = date, y = residuals)) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black") + # Zero-line for reference
-  geom_point(aes(color = factor(year)), alpha = 0.5) + # Color by year to spot trends
-  geom_smooth(color = "black", method = "loess", span = 0.1) + # Local smoother to show bias
-  scale_x_date(
-    date_breaks = "1 year",      
-    date_labels = "%Y") +
-  labs(
-    title = "Model M2 Residuals Over Time (2020-2025)",
-    x = "Date",
-    y = "Residuals",
-    color = "Year"
-  ) +
-  theme_minimal()
 
 # Plot option 2
 cycle_daily_df <- cycle_daily_df %>%
@@ -529,6 +508,23 @@ apr_residuals <- april_2022_data$count - apr_preds
 mean_res_apr22 <- mean(apr_residuals)
 rmse_apr22 <- sqrt(mean(apr_residuals^2))
 
-
 # Interesting diagnostic plot 
 
+# Extract Cook's Distance 
+cycle_daily_df$cooks_d <- cooks.distance(mbest)
+cycle_daily_df$obs_index <- 1:nrow(cycle_daily_df)
+
+# Faceted plot
+ggplot(cycle_daily_df, aes(x = obs_index, y = cooks_d)) +
+  geom_segment(aes(xend = obs_index, yend = 0), color = "steelblue", alpha = 0.7) +
+  geom_hline(yintercept = 4/nrow(cycle_daily_df), linetype = "dashed", color = "red") +
+  facet_wrap(~factor(month, levels = month.abb), scales = "free_x") +
+  labs(
+    title = "Faceted Cook's Distance by Month",
+    subtitle = "Identifying which seasonal outliers exert the most influence on the model",
+    x = "Observation Index",
+    y = "Cook's Distance"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(), 
+        strip.background = element_rect(fill = "gray95"))
