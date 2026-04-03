@@ -327,6 +327,14 @@ This under-fit is likely due to the Edinburgh International Science Festival tak
 
 ### Original diagnostic plot
 
+
+
+We created a plot of Cook's Distance by month and year to show the degree of influence that each month exerts on the model per year.
+
+
+
+Transport planners should be prepared, especially during the Fringe, to account for ex 
+
 # Discussion and limitations
 
 <!--
