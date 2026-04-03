@@ -224,19 +224,21 @@ kable(m2_comparison,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-The model with minimum daily temperature has the lowest scores whereas the temp_max model has the highest scores. Generally, the scores from the mean and minimum models are very similar, in particular the DS score is identical up to 2 d.p. We conclude predictive performance is best when temp_min is used as the basis for the temperature terms. This is physically plausible as temperatures are lowest at either side of the working day, when we expect most people to cycle.
+The model with minimum daily temperature has the lowest scores whereas the temp_max model has consistently the highest scores. Generally, the scores from the mean and minimum models are very similar, in particular the DS score is identical up to 2 d.p. We conclude predictive performance is best when temp_min is used as the basis for the temperature terms. This is physically plausible as temperatures are lowest at either side of the working day, when we expect most people to cycle.
 
 At $5^\circ$c, a $1^\circ$c increase is associated with approximately 46 additional cyclists.
 
-At $15^\circ$c, a $1 ^\circ$c increase is associated with approximately 200 fewer cyclists. Which is expected based on the quadratic line beginning to curve downwards at $15^\circ$c in figure 3, implying that at higher temperatures, an increase results in fewer cyclists. 
+At $15^\circ$c, a $1 ^\circ$c increase is associated with approximately 200 fewer cyclists. Which is expected based on the negative quadratic curve at $15^\circ$c in figure 3, thus at higher temperatures, with all other variables constant, we anticipate a decrease in count.
+
 
 ### Seasonal Prediction Accuracy
 
-The month with the lowest RMSE and DS is July, followed closely by June. This indicates that the average value between the predicted and actual values are lowest for June and July, and that M2 best predicts the average value and uncertainty for these months. Cycle numbers are generally higher during these months, and the weather is generally consistent. Furthermore, there are no major holidays falling within these months that could lead to spikes or dips in numbers. 
+The lowest RMSE and DS scored month is July, followed closely by June. Thus, the mean differences between the predicted and actual values are lowest for June and July; M2 best predicts the count (including uncertainty) for these months. Cycle numbers are generally higher during these months, and the weather is generally consistent. Furthermore, there are no major holidays falling within these months that could lead to spikes or dips in numbers. 
 
-The month with the highest RMSE and DS is April, followed by March. This indicates poor fit of M2 during March and April, and a worse prediction of the mean cycle count and variation in count. The weather is very volatile during spring, particularly concerning rainfall. For example, a day with higher temperatures but heavy rainfall is likely to see a drop in cyclists, but the data doesn't account for this. This is therefore a limitation in the data. 
+The highest RMSE and DS scores come from April, followed by March. This indicates a poor fit of M2, and a worse prediction of the mean cycle count and variation in count.
+Some of the March volatility may come from the March 2020 stratum, when lockdown was dramatically enforced and restrictions were most severe and respected. The weather, especially rainfall is most volatile during spring. For instance, a day with higher temperatures but heavy rainfall is likely to result in less cyclists. We hypothesise rainfall may be a greater influence than temperature but but the data doesn't account for this.
 
-The scores for August are considerably higher than the scores for the other Summer months. We believe this is due to the cycling event in August 2022 introduced earlier, which saw massively higher cyclist counts than in other years. More generally, the accuracy may be lower in certain months as the model does not account for holidays and special events, such as the cycling event or Fringe Festival. This is a limitation of both the model and data, as there could be more data on outside factors, and the model could be updated to account for these cases.
+The August scores are considerably higher than other summer months. We hypotheise this is due to the cycling event in August 2022 introduced earlier, which saw exceptionally high cyclist count compared to other years. The prediction accuracy is limited since the data does not account for holidays and special events, such as the cycling event or Fringe Festival. This is a limitation of both the model and data, since with the improved data, a more comprehensive model could be built.
 
 ### Long-term trend and extrapolation
 
@@ -250,7 +252,7 @@ kable(table3_final,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-The estimated annual change in daily cyclist count for our final model, M2, is -683. This means that for each year that passes, there is predicted to be 683 fewer daily cyclists. The predicted number of cyclists on the first day of observations (1st January 2020) is 12,463. Therefore, the daily cyclist count is estimated to drop by $5.48 \%$ per year. If this trend were to continue, then the daily cyclist count would half within 9 to 10 years.
+The estimated annual change in daily cyclist count for our final model M2 is -683. Thus for each year passed, we predict 683 fewer daily cyclists. The predicted number of cyclists on the first day of observations (1st January 2020) is 12,463. Therefore, the daily cyclist count is estimated to drop by $5.48 \%$ per year. If this trend were to continue, then the daily cyclist count would half within 9 to 10 years.
 
 Additionally, the trend coefficient for all of the models have extremely small p-values (less than 0.01). This provides strong evidence that the downward trend observed in the daily cyclist count is not random, but is instead an observable decline in cycling demand over the 5 year period. 
 
