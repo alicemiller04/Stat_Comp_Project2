@@ -312,19 +312,17 @@ This extrapolation may not hold in practice because it doesn't take into account
 
 ### Identifying a poorly fit period
 
-To examine the residuals of the model we created figure 12.
+To examine the residuals of the model we created a plot of the residuals over time, with different lines representing different years.
 
 ```{r plot residuals vs time, fig.cap="Plot of Residuals vs Time, coloured by year", fig.height = 3, fig.width = 6}
 plot_residuals_years
 ```
 
-The model is noticeable under predicting the daily counts for April 2022. From figure 12 we can infer that the actual cyclist count was over 10,000 more than what M2 predicted.
+We can see from Figure 12 that model M2 is noticeably performing poorly during the period of April 2022. From Figure 12 we can infer that the actual cyclist count during this period was over 10,000 more than what M2 predicted. During this period, the model recorded a mean residual of +8,033 and an RMSE of 10,528.
 
-During this month, the model recorded a mean signed residual of +8,033 and an RMSE of 10,528.
+Because the mean residual is positive, the model systematically under-predicts cycling count during this period, which is also clear from Figure 12. The magnitude of the RMSE is more than double the LOYO RMSE score for M2, indicating a significant failure to capture the actual cycling volume.
 
-Because the mean residual is positive, the model systematically under-predicts cycling count during this period. The magnitude of the RMSE is more than double the model's overall average (4,588), indicating a significant failure to capture the actual cycling volume.
-
-This failure is likely due to the Pedal on Parliament mass-cycling event held in Edinburgh in April 2022. Such one-off events create massive surges in cyclist counts that are not explained by factors in the dataset. From a planning perspective this highlights a limitation of the model. While it is effective for baseline commuter trends, it cannot account for significant events that massively increases the amount of cyclists on the roads.
+This under-fit is likely due to the Edinburgh International Science Festival taking place from the 9th -24th April 2022 which brought in 50,000 participants and specifically boasted 'an unashamed emphasis on the urgency of tackling the climate crisis'$^{2}$. The cycle count may have been inflated because of the environmental emphasis of the festival and high numbers as the previous years' festivals did not take place due to the lockdown. From a planning perspective this highlights a limitation of the model. While it is effective for baseline commuter trends, it cannot account for significant events that massively affect the cyclist count. 
 
 
 ### Original diagnostic plot
@@ -342,6 +340,8 @@ Do not introduce new results here.
 
 # Appendix - References
 $^{1}$ https://mccyclingdiary.blogspot.com/2022/08/london-edinburg-london-lel-2022-edition.html
+$^{2}$ https://theedinburghreporter.co.uk/2022/04/its-a-wrap-as-esf-2022-closes-after-another-successful-edition/
+
 
 # Appendix - Code
 
