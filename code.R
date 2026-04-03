@@ -515,16 +515,18 @@ cycle_daily_df$cooks_d <- cooks.distance(mbest)
 cycle_daily_df$obs_index <- 1:nrow(cycle_daily_df)
 
 # Faceted plot
-faceted_cooks_plot <- ggplot(cycle_daily_df, aes(x = obs_index, y = cooks_d)) +
-  geom_segment(aes(xend = obs_index, yend = 0), color = "steelblue", alpha = 0.7) +
+faceted_cooks_plot <- ggplot(cycle_daily_df, aes(x = year, y = cooks_d)) +
+  geom_point(color = "steelblue", alpha = 0.6) + 
   geom_hline(yintercept = 4/nrow(cycle_daily_df), linetype = "dashed", color = "red") +
-  facet_wrap(~factor(month, levels = month.abb), scales = "free_x") +
+  facet_wrap(~factor(month, levels = month.abb), scales = "free_x", nrow = 2, ncol = 6) +
   labs(
     title = "Faceted Cook's Distance by Month",
-    subtitle = "Identifying which seasonal outliers exert the most influence on the model",
-    x = "Observation Index",
+    subtitle = "Influential observations across years",
+    x = "Year",
     y = "Cook's Distance"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(), 
-        strip.background = element_rect(fill = "gray95"))
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1), 
+    strip.background = element_rect(fill = "gray95")
+  )
