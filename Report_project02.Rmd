@@ -327,16 +327,13 @@ This under-fit is likely due to the Edinburgh International Science Festival tak
 
 ### Original diagnostic plot
 
-```{r}
+We created a plot of Cook's Distance over time to show the degree of influence that each month exerts on the model, with lines seperated by year. 
+
+```{r cooks distance plot over time, fig.cap="Plot of Cook's distance over time", fig.height = 3, fig.width = 6}
 faceted_cooks_plot
 ```
 
-
-We created a plot of Cook's Distance by month and year to show the degree of influence that each month exerts on the model per year.
-
-
-
-Transport planners should be prepared, especially during the Fringe, to account for ex 
+We can see from Figure 13 that 3 points during August 2022 are exerting the highest influence by far on the model. This is in line with our observations from Figure 1 that there was a spike in this period due to the Edinburgh-London-Edinburgh race that took place. This is followed by variations in Spring, also in 2022, which we also can note from Figure 1 had higher-than-usual cyclist counts. This period saw an end to lockdown restrictions, leading more commuters to cycle to work and also more people to cycle for pleasure. As the restrictions are now over, this is likely something that won't have to be accounted for in the future. Transport planners should be prepared, especially during the Fringe in August, to account for exceptionally high cyclist counts due to races and/or sunny days and adjust accordingly. 
 
 # Discussion and limitations
 
@@ -350,27 +347,6 @@ Do not introduce new results here.
 -->
 
 
-3-5 paragraphs covering:
-  - Whether model assumptions appear satisfied
-  yes we know from the analysis of m2 it generally follows assumptions though the dispraportionately high leverage date should be noted. (Can easily extract) 
-  
-  
-  - Key limitations of the model and data
-  Other variables like festival effect, is_fringe, is_school_holiday and their interaction effects with temperature, is raining/windy/stormy may be a better predictor of cycling than average temperature
-  is_covid as a concept is very abritrary, the end of covid is not a discerete time scale, it is more continuous and blurred.
-  other variables like cycle lane coverage (proportion of roads w lanes)/(shelters) may exert its own infleunce 
-  
-  data limitations: 
-  _ we have a limited number of years, having pre covid years may encapsulate the seasonality constraints more vividly  and for example post covid effects like the closure of fringe.
-  - we know litle about the 'strategic locations' where counts were measured.
-  Population size is important to consider.
-  
-  - What ideas would improve prediction.
-  We could 
-  
-  - Whether findings generalise to other cities or future years.
-  the trend concept may have a similar change in behaviour 
-Do not introduce new results here.
 
 
 
