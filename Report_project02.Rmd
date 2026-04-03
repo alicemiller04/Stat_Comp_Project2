@@ -167,18 +167,14 @@ To mediate the heavy right tailed Q-Q plots seen in the previous models, we appl
 transform to the count response. We added in binary predictor variables - 'is_holiday' and 'is_covid' - introduced and defined during exploratory data analysis. We made the following graphs to justify the validity of adding these predictor variables to M3.
 
 
-```{r Boxplot of holiday, fig.cap="Boxplot of 'is_holiday' variable (Dec 24th - 31st)", fig.height = 3, fig.width = 5}
-plot_holiday
+```{r side-by-side-plots, fig.cap="Comparison of Holiday Effects (Left) and Covid Trends (Right)", fig.width=10, fig.height=4}
+library(patchwork)
+plot_holiday + plot_covid
 ```
 
-We can see from Figure 8 that the median daily cyclist count is significantly lower during the specified festive period. The spread (IQR) of counts is also very small during the festive period, indicating that there are consistently much lower counts during this time. This suggests that it is a valid indicator to include. 
+We can see from Figure 8(i) that the median daily cyclist count is significantly lower during the specified festive period. The spread (IQR) of counts is also very small during the festive period, indicating that there are consistently much lower counts during this time. This suggests that it is a valid indicator to include. 
 
-```{r Impact of adding covid, fig.cap="Overall trend during lockdown and over the whole period", fig.width = 6, fig.height = 3}
-plot_covid
-
-```
-
-We can see from Figure 9 that during the lockdown period, the decline is more pronounced than for the whole time period that the data spans. This indicates that there is an observable effect of Covid on the cyclist count, and that it is justified in adding it into M3. 
+We can see from Figure 8(ii) that during the lockdown period, the decline is more pronounced than for the whole time period that the data spans. This indicates that there is an observable effect of Covid on the cyclist count, and that it is justified in adding it into M3. 
 
 We then evaluated the assumptions of M3 through looking at the following diagnostic plots. 
 
