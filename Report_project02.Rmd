@@ -265,9 +265,10 @@ Despite the variations in magnitude, the fact that the trend remains negative an
 
 $\textbf{Covid Distortion}$ 
 
-The linear trend is a reasonable baseline assumption for the 2020-2025 period, as the most disruptive impact of the lockdown was concentrated within a one-year window. As shown in Figure 9, the fundamental yearly structure with winter troughs and summer peaks remained consistent throughout the lockdown period. Additionally, some people may have been working from home and therefore not commuting, whilst others may have taken up cycling to avoid public transport. Despite this, the overall time-series suggests that these fluctuations did not fundamentally affect the long-term trajectory of the data. 
+The linear trend is a reasonable baseline assumption for the 2020-2025 period, as the most disruptive impact of the lockdown was concentrated within a one-year window. As shown in Figure 8, the fundamental yearly structure with winter troughs and summer peaks remained consistent. Additionally, those working from home would not be commuting, whilst others may have taken up cycling to avoid public transport. Despite this, Figure 8 suggests that these fluctuations did not fundamentally affect the long-term trajectory of the data. 
 
-Including a Covid indicator in M3 does change the trend coefficient significantly. In our final model, M2, which does not account specifically for Covid, the daily decline was -1.872 cyclists. Once the Covid indicator was added, the daily trend coefficient shifted to -2.431. This suggests that once we account for this specific period, the underlying daily decline is actually steeper than the other models suggest. To ensure that the shift wasn't purely due to the 'is_holiday' predictor, we fit M3 without it. The findings remained consistent, confirming that the lockdown period is the primary factor distorting the long-term linear trend estimate. 
+Including a Covid indicator in M3 does change the trend coefficient significantly. In our final model, M2, which does not account specifically for Covid, the daily decline was -1.872 cyclists. Once the Covid indicator was added, the daily trend coefficient shifted to -2.431. This suggests the underlying daily decline is steeper than the other models suggest. To ensure that the shift wasn't purely due to the 'is_holiday' predictor, we fitted M3 without it. The findings remained consistent, confirming that the lockdown period is the primary factor distorting the long-term linear trend estimate. 
+
 
 $\textbf{Extrapolation}$ 
 
