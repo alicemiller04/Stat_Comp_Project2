@@ -113,88 +113,73 @@ The linear assumption seems to be validated as we can see from the Scale-Locatio
 # Proposed Models
 ## Model 1: Linear temperature with trend and factor variables
 
-We created a further model, M1, which adds in the trend variable as a predictor to capture the drift in cycling levels over 2020-2025, and interprets day of week and month as factor variables rather than numeric variables.
-
-Our proposed equation for M1 (identifiable form) is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-The prediction for day 1 (Monday) and month 1 (Jan) are represented by the intercept term $\beta_0$
-Every other month or day is measured as the expected difference in count from the baseline. M1 is an improvement over M0 because M1 takes into account the impact of different weekdays rather than simplistic weekend or non weekend effects. Changing 'month' to a factor variable allows for building a seasonal profile rather than assuming the month index (1-12) is linear with the count.
-We omit the weekend term and numerical version of 'month' to avoid collinearity with their 'factor' versions and because the covariate 'dow' is collinear with 'weekend'.
+The prediction for a Monday in January is represented by $\beta_0$. Every other month or day is measured as the expected difference from the baseline. Unlike M0, M1 takes into account the impact of different days. Interpreting 'month' as a factor variable lets us build a seasonal profile, rather than assuming the month index (1-12) is linear with the count. We drop the numerical 'month' and 'is_weekend' to avoid collinearity with the factor 'month' and 'dow' respectively.
 
 
-```{r side by side comparison of M0 and M1, fig.cap="Diagnostic Plots for M1", fig.width = 6, fig.height= 4}
+```{r M1 diagnostic plots, fig.cap="Diagnostic Plots for M1", fig.width = 6, fig.height= 4}
 grid.arrange(p_m1_1,p_m1_2,p_m1_3,p_m1_4, nrow = 2, ncol = 2)
 ```
 
-We can see from the Residuals vs Fitted Values plot in Figure 6 that, despite the 'n' pattern about the mean being slightly less pronounced, the mean residual line follows a slight sigmoid shape, suggesting the linear assumption is still violated for M1. The Q-Q plot looks slightly more aligned to the normal line at the lower tail in comparison to M1, suggesting that the prediction for the days with lower cyclist counts has improved. There is now however a point with relatively larger leverage as seen in the Residuals vs Leverage plot. The linear assumption appears to be slightly more justified than with M0, as we can see from the Scale-Location plot.
+Figure 6 shows that, while M1's 'n' pattern is less pronounced, the sigmoid shape of the mean residual line suggests the linear assumption is still violated. The Q-Q plot shows improved alignment at the lower tail, though a higher leverage point appears. The Scale-Location plot indicates the linear assumption is slightly better justified than in M0. 
 
 ## Model M2: Quadratic temperature 
 
-Our proposed equation for M2 (identifiable form) is:
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{temp\_mean}^2_i + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-We can infer from Figure 3 that there is an underlying non-linear relationship between the mean temperature and the daily cyclist count. Hence, replacing the linear 'mean temperature' term with a nonlinear alternative term, the underlying structure may be better explained by the model. We can evaluate this using the following diagnostic plots for M2.
+Figure 3 identified a non-linear relationship between temperature and cyclist counts. M2 addresses this by replacing the linear temperature term with a quadratic alternative.
 
-```{r 1st_Diagnostics_of_M1_M2, fig.cap="Diagnostic Plots for M2", fig.height = 4, fig.width = 6}
+```{r Diagnostic plots for M2, fig.cap="Diagnostic Plots for M2", fig.height = 4, fig.width = 6}
 grid.arrange(p_m2_1, p_m2_2, p_m2_3, p_m2_4, nrow = 2, ncol = 2)
 ```     
 
-We can see from Figure 7 that the linear assumption still appears to be justified and the outlier's leverage has more than doubled. There is not much difference from M1 in the diagnostic plots, suggesting that the explanatory power of M2 is not improved upon M1.
-
+Diagnostics in Figure 7 show that the linear assumption remainds justified, though outlier leverage has increased. Since diagnostic plots show minimal change from M1, M2's explanatory power appears similar.
 
 ## Model M3: Logarithmic count with nonlinear temperature
 
-The expression is: 
 $$\log(\text{count}_i + 1) = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{temp\_mean}_i^2 + \beta_3 \text{trend}_i + \sum_{j=2}^{12} \gamma_j \mathbb{I}(\text{month}_i = j) + \sum_{k=2}^{7} \delta_k \mathbb{I}(\text{dow}_i = k) +
 $$$$
 \beta_4 \text{is\_covid}_i + \beta_5 \text{is\_holiday}_i + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-To mediate the heavy right tailed Q-Q plots seen in the previous models, we apply the log 
-transform to the count response. We added in binary predictor variables - 'is_holiday' and 'is_covid' - introduced and defined during exploratory data analysis. We made the following graphs to justify the validity of adding these predictor variables to M3.
+M3 applies a log-transform to the count response to mitigate the heavy right-tailed Q-Q plots observed in previous models. Binary predictors 'is_holiday' and 'is_covid' are justified by Figures 8 and 9.
 
 
-```{r side-by-side-plots, fig.cap="Comparison of Holiday Effects (Left) and Covid Trends (Right)", fig.width=10, fig.height=4}
-library(patchwork)
-plot_holiday + plot_covid
+```{r Boxplot of holiday, fig.cap="Boxplot of 'is_holiday' variable (Dec 24th - 31st)", fig.height = 3, fig.width = 5}
+plot_holiday
 ```
 
-We can see from Figure 8(i) that the median daily cyclist count is significantly lower during the specified festive period. The spread (IQR) of counts is also very small during the festive period, indicating that there are consistently much lower counts during this time. This suggests that it is a valid indicator to include. 
+The festive period (December 24th-31st) shows significantly lower, more consistent counts. 
 
-We can see from Figure 8(ii) that during the lockdown period, the decline is more pronounced than for the whole time period that the data spans. This indicates that there is an observable effect of Covid on the cyclist count, and that it is justified in adding it into M3. 
+```{r Impact of adding covid, fig.cap="Overall trend during lockdown and over the whole period", fig.width = 6, fig.height = 3}
+plot_covid
 
-We then evaluated the assumptions of M3 through looking at the following diagnostic plots. 
+```
+
+The lockdown period shows a more pronounced decline than the overall five-year trend.
+
 
 ```{r Diagnostic plots M3, fig.cap="Diagnostic Plots for M3", fig.height = 4, fig.width = 6}
 grid.arrange(p_m3_1, p_m3_2, p_m3_3, p_m3_4, nrow = 2, ncol = 2)
 ```
 
-The difference in the linear assumption is negligible compared to the previous models. The Q-Q plot suggests that the normality assumption is more justified than in the previous models. The scale-location plot suggests that M3 displays heteroscedasticity (unlike M2), meaning the constant variance assumption is violated. There remains a point of noticeably higher influence, as shown in the Residuals vs Leverage plot. 
+Diagnostics for M3 suggest the normality assumption is again justified. However, the Scale-Location plot indicates heteroscedasticity, violating the constant variance assumption. A high-influence point remains visible in the Residuals vs Leverage plot. 
 
-Our final model is M2. We created a coefficient table for it as follows.
+Our final model is M2. 
 
 ```{r summary for m2} 
-
-# should this be in code.r?
-cycle_daily_df$month <- factor(cycle_daily_df$month, ordered = FALSE)
-cycle_daily_df$dow <- factor(cycle_daily_df$dow, ordered = FALSE)
-
-m2new <- lm(count ~ temp_mean + I(temp_mean^2)  + trend + 
-           factor(month) + factor(dow), data = cycle_daily_df )
-m2_table <- as.data.frame(summary(m2new)$coefficients)
-colnames(m2_table) <- c("estimate", "std Error", "t value", "p value")
-
 kable(m2_table, 
       digits = 4, 
       caption = "Summary for Model M2") 
                 
 ```
 
-We can see from Table 3 that the estimated daily cyclist count when the mean temperature is 0, and it is a Monday during January is 6990. The coefficient estimates represent the estimated difference from the baseline for each predictor. There is a positive coefficient for the mean temperature variable, and a negative one for the quadratic mean temperature variable. This indicates that the cyclist count rises generally with the temperature, yet is lower at the more extreme high and low mean temperatures. All of the month coefficients are positive except December, which indicates that January sees the second-lowest daily cyclist counts. The day of week coefficients are all positive, which makes sense as we saw during exploratory data analysis that Monday has the lowest average cyclist count. The p-values are all very low (under 0.03) except from the month October and the day Sunday. Therefore, we can conclude that the predictors are significant at a 97% significance level. 
+Table 3 shows a baseline of 6,990 cyclists (January Mondays at 0$^{\circ}C$. The positive linear and negative quadratic temperature coefficients confirm that counts rise with temperature but taper off at extremes. January and December see the lowest counts, and all day-of-weeks see higher counts than the baseline. Most predictors are significant ($p < 0.03$), except for October and Sunday.  
+
 
 # Evaluation
 ## Statistical Performance
@@ -324,23 +309,13 @@ We can see from Figure 13 that 3 points during August 2022 are exerting the high
 
 # Discussion and limitations
 
-<!--
-3-5 paragraphs covering:
-  - Whether model assumptions appear satisfied.
-  - Key limitations of the model and data.
-  - What ideas would improve prediction.
-  - Whether findings generalise to other cities or future years.
-Do not introduce new results here.
--->
+The model assumptions generally appear satisfied, as shown in Figure 7. It is worth noting the point of high leverage, shown in Figure 13 to correspond to the August 2022 cycle race. While this outlier influences the model, the quadratic temperature terms and daily trend effectively capture the data's primary structure.
 
+A key limitation is the five-year observation window, which was heavily impacted by COVID-19. Access to pre-pandemic years would better encapsulate seasonality and highlight effects the model may have missed, such as the 2020 Fringe Festival closure. Furthermore, the lack of data on rainfall and wind speed is a constraint; interaction effects between these variables and temperature would likely predict cyclist counts more accurately than mean temperature alone.
 
+Predictions could be improved by adding granular variables for the Fringe Festival and school holidays. Additionally, the transition out of lockdown was not a discrete event; including specific data on when various restrictions were eased would be good. We also lack information regarding the "strategic locations" of the counters. Adjusting for local data and population density would help account for demographic shifts influencing volume.
 
-
-
-
-
-
-
+General commuting patterns may be generalised to similar cities, but Edinburgh-specific factors like the Fringe are unique. It is difficult to extrapolate long-term trends from only five years of data. Although the downward trend is statistically clear, the lack of more diverse predictors makes it difficult to say with certainty if this decline will persist or if demand will stabilise.
 
 
 
