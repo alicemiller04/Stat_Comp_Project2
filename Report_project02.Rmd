@@ -149,17 +149,11 @@ $$\epsilon_i \sim N(0, \sigma^2)$$
 M3 applies a log-transform to the count response to mitigate the heavy right-tailed Q-Q plots observed in previous models. Binary predictors 'is_holiday' and 'is_covid' are justified by Figures 8 and 9.
 
 
-```{r Boxplot of holiday, fig.cap="Boxplot of 'is_holiday' variable (Dec 24th - 31st)", fig.height = 3, fig.width = 5}
-plot_holiday
+```{r}
+plot_holiday + plot_covid
 ```
 
 The festive period (December 24th-31st) shows significantly lower, more consistent counts. 
-
-```{r Impact of adding covid, fig.cap="Overall trend during lockdown and over the whole period", fig.width = 6, fig.height = 3}
-plot_covid
-
-```
-
 The lockdown period shows a more pronounced decline than the overall five-year trend.
 
 
@@ -257,11 +251,11 @@ Additionally, the trend coefficient for all of the models have extremely small p
 
 $\textbf{Model consistency}$ 
 
-M1 and M2 produced similar results, with annual declines of -692 and -683 respectively. This suggests that the trend estimate is robust even when accounting for the quadratic effect of temperature, and the months and days of week as factor variables. M3, the log model, shows a steeper decline of -887 cyclists per year, approximately 30% lower than M2.
+M1 and M2 produced similar results, with annual declines of -692 and -683 respectively. This suggests that the trend estimate is robust even when accounting for the quadratic effect of temperature, the month and days of week factor variables. M3 shows a steeper decline of -887 cyclists per year, approximately 30% lower than M2.
 
-This difference is likely due to the logarithmic scale in M3, which is more sensitive to relative percentage changes. Additionally, M3 includes indicators for the Covid lockdown and festive holidays, so accounts for the specific variance associated with these periods to isolate the downward trend. 
+This difference is likely due to the logarithmic scale in M3, which is more sensitive to relative percentage changes. M3 includes indicators for the Covid and festive holidays, so accounts for the variance associated with each to isolate the downward trend. 
 
-Despite the variations in magnitude, the fact that the trend remains negative and highly significant across all models demonstrates that the downward trend is robust. 
+Despite variations in magnitude, we observe the negative trend coefficient that is highly significant for all models demonstrates and thus the variable is a robust addition to model
 
 $\textbf{Covid Distortion}$ 
 
