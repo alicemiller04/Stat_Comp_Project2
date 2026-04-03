@@ -266,16 +266,15 @@ Including a Covid indicator in M3 does change the trend coefficient significantl
 
 $\textbf{Extrapolation}$ 
 
-We created a plot projecting demand forward to 2035 using Model M2. To provide a better scenario for planning, we held weather and seasonality constant, using a Wednesday in July at the mean temperature. We already established that M2 has the best predictive power during July as the variation in daily cyclists is comparatively low. 
-
+We projected demand to 2035 using Model M2, holding weather and seasonality constant for a Wednesday in July at the mean temperature. July was chosen as it represents peak annual demand, providing a baseline for infrastructure requirements.
 
 ```{r plot extrapolation, fig.cap="Plot projecting demand forward to 2035, for a Wednesday in July of mean temperature", fig.height = 3, fig.width = 5}
 extrapolation_plot
 ```
 
-While July typically sees peak cycling volumes, the model indicates a downward trajectory. As shown in Figure 11, the projected daily count begins at approximately 15,000 in 2020 and decreases to roughly 5000 by 2035. At this current rate of decline, mean daily counts under summer weekday conditions are expected to reach the 10,000 cyclist threshold on the 2nd of February 2027, and the 5000 cyclist threshold on the 26th of May 2034. 
+While July typically sees peak cycling volumes, the model indicates a downward trajectory. As shown in Figure 11, the projected daily count starts at approximately 15,000 in 2020 and falls to roughly 5000 by 2035. At this rate, summer weekday counts are expected to drop below 10,000 on the 2nd of February 2027, and reach 5000 by the 26th of May 2034. 
 
-This extrapolation may not hold in practice because it doesn't take into account other factors. The implementation of further Low Emission Zones and rising petrol prices may increase the relative cost of driving, incentivising people to take up cycling as a means of transport. Additionally, the under 22 free bus scheme in Scotland may be removed, pushing young people to cycle more often. General population growth in Edinburgh could also lead to more people cycling daily. 
+This extrapolation may not hold if policy or economic factors shift. Expanding Low Emission Zones or rising petrol prices may disincentivise driving, while removing the under-22 Free Bus Scheme might encourage younger demographics to return to cycling. Additionally, Edinburgh's growing population could sustain a minimum demand level that a linear trend does not take into account.
 
 
 ### Identifying a poorly fit period
