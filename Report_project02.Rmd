@@ -57,37 +57,28 @@ grid.arrange(plot_month,plot_dow, nrow = 2)
 ```
 
 
-We can see from Figure 2 that the colder months (October - February) have slightly lower cyclist counts, with the other months remaining relatively constant. There are a lot of outliers, especially in Spring. Observations with unusually high cyclist counts could be attributed to special events such as races, bank holidays, and exceptionally sunny days. Outside of winter, the month doesn't appear to have an impact on the median count. August has a high count outliers, which may come from the combined effect of the Fringe Festival and the cycling event mentioned previously.
-
-The second boxplot in Figure 2 indicates that there tends to be less cyclists on Mondays and Sundays, with the other days appearing relatively constant. 
+We can see from Figure 2 that the colder months (October - February) have slightly lower cyclist counts, with the other months remaining relatively constant. There are a lot of outliers, especially in Spring. Observations with unusually high cyclist counts could be attributed to special events such as races, bank holidays, and exceptionally sunny days. Outside of winter, the month doesn't appear to have an impact on the median count. August has a high count outliers, which may come from the combined effect of the Fringe Festival and the cycling event mentioned previously. The second boxplot in Figure 2 indicates that there tends to be less cyclists on Mondays and Sundays, with the other days appearing relatively constant. 
 
 ```{r scatter plot of count vs temp_mean, fig.cap="Scatter plot of Daily cyclist count vs mean temperature.", fig.height = 3, fig.width = 5}
 plot_temp_scatter
 ```
 
-Figure 3 shows a clear positive correlation between temperature mean and daily cyclist count. There are significantly less observations for days with the lowest and highest mean temperatures, making it difficult to extrapolate for these days. There is a large variation in cyclist counts for days with the same temperature, so it is not feasible to predict counts based off of mean temperature alone.  
-
-We noticed that the days with the lowest counts fell between Christmas Eve and New Years Eve, presumably due to less commuters on the road.
+Figure 3 shows a clear positive correlation between temperature mean and daily cyclist count. There are significantly less observations for days with the lowest and highest mean temperatures, making it difficult to extrapolate for these days. There is a large variation in cyclist counts for days with the same temperature, so it is not feasible to predict counts based off of mean temperature alone. We noticed that the days with the lowest counts fell between Christmas Eve and New Years Eve, presumably due to less commuters on the road.
 
 ```{r plot december, fig.cap="Line Graph of average daily cyclists across the 5 years in decemeber.", fig.height = 3, fig.width = 5}
 plot_december
 
 ```
 
-We can see from Figure 4 that there is a substantial decrease in cyclist numbers between the specified days. This led us to add a variable "is_holiday" for this period.
-
-The data spans the Covid-19 pandemic, so we added a binary predictor 'is_covid' into the dataframe to indicate whether a day falls within the UK mandated lockdown.
+We can see from Figure 4 that there is a substantial decrease in cyclist numbers between the specified days. This led us to add a variable "is_holiday" for this period. The data spans the Covid-19 pandemic, so we added a binary predictor 'is_covid' into the dataframe to indicate whether a day falls within the UK mandated lockdown.
 
 # Baseline model 
 
-We fit an initial linear model, M0, that uses the numeric variables mean temperature, weekend, and month to predict the daily cyclist count. 
-
-The equation for M0 is:
+We fit an initial linear model, using numeric variables to predict cyclist count.
 
 $$\text{count}_i = \beta_0 + \beta_1 \text{temp\_mean}_i + \beta_2 \text{weekend}_i + \beta_3 \text{month}_i + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-The summary statistics for M0
 
 ```{r summary for m0} 
 
@@ -101,14 +92,15 @@ kable(coef_matrix,
 ```
 
 
-Table 2 shows for every $1^\circ$c increase in the mean daily temperature, M0 predicts an increase of 247 cyclists per day, and predicts a 1247 decrease in cyclist count on weekends compared to weekdays. The model suggests that there is a decrease of 247 cyclists for each month passing as M0 uses month as a numeric predictor, therefore ignoring the fact that cyclist counts generally increase in summer and fall in winter.
+As shown in Table 2, M0 predicts a daily increase of 247 cyclists per $1^\circ$c increase, and a decrease of 1,247 on weekends. By treating the month as a numeric predictor, the model incorrectly assumes a constant monthly decline of 247, ignoring the yearly summer  peaks and winter troughs.
 
 
 ```{r r vs f and qq plots m0, fig.cap="Diagnostic plots for M0.", fig.height = 4, fig.width = 6}
 grid.arrange(p_m0_1,p_m0_2, p_m0_3,p_m0_4, nrow = 2, ncol = 2)
 ```
 
-The linear assumption seems to be validated as we can see from the Scale-Location plot in Figure 5, and there don't appear to be any points with unreasonable leverage. The Residuals vs Fitted plot shows a mean variance of 0, independent of the fitted values. The residuals show a non-linear pattern, with an arguable 'n' shape above the mean line, indicating there is an underlying non-linear structure yet to be included in our model. The Q-Q plot demonstrates right skewing and heavy tail in the positive quantiles, indicating that M0 is particularly bad at predicting high count observations. Therefore, the normality assumption for linear regression is violated. 
+Diagnostic plots in Figure 5 suggest the linear and constant variance assumptions are generally validated, with no points exhibiting unreasonable leverage. However, the Residuals vs Fitted plot displays an "n-shaped" pattern, indicating an underlying non-linear structure not yet captured. Furthermore, the Q-Q plot reveals significant right-skewing and heavy tails, confirming that the normality assumption is violated and that M0 fails to accurately predict high-count observations.
+
 
 # Proposed Models
 ## Model 1: Linear temperature with trend and factor variables
@@ -146,7 +138,7 @@ $$$$
 \beta_4 \text{is\_covid}_i + \beta_5 \text{is\_holiday}_i + \epsilon_i$$
 $$\epsilon_i \sim N(0, \sigma^2)$$
 
-M3 applies a log-transform to the count response to mitigate the heavy right-tailed Q-Q plots observed in previous models. Binary predictors 'is_holiday' and 'is_covid' are justified by Figures 8 and 9.
+M3 applies a log-transform to the count response to mitigate the heavy right-tailed Q-Q plots observed in previous models. Binary predictors 'is_holiday' and 'is_covid' are justified by Figure 8.
 
 
 ```{r plot holidays + covid ,fig.cap= "Comparison of Holiday (left) and Covid (right) effects", fig.height = 4, fig.width = 10}
@@ -189,11 +181,9 @@ kable(table1_final,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-We can see from Table 4 that M2 has the lowest score for RMSE, indicating M2 fits the dataset best. M2 also has the lowest score for MAE, suggesting it is less sensitive to extreme outliers. The low IS demonstrates that M2 produces narrow, specific intervals that include the true count most of the time. M0 has a lower DS than M2 by 0.02, suggesting it is slightly better at predicting the mean and variance of the daily cyclist count.However all of the DS scores are very close, and we established that M0 is the worst model as it doesn't take any quadratic effects of temperature, or the fact that there are factor variables.
+We can see from Table 4 that M2 has the lowest score for RMSE, indicating M2 fits the dataset best. M2 also has the lowest score for MAE, suggesting it is less sensitive to extreme outliers. The low IS demonstrates that M2 produces narrow, specific intervals that include the true count most of the time. M0 has a lower DS than M2 by 0.02, suggesting it is slightly better at predicting the mean and variance of the daily cyclist count.However all of the DS scores are very close, and we established that M0 is the worst model as it doesn't take any quadratic effects of temperature, or the fact that there are factor variables. 
 
-This was the basis for us choosing M2 as our final model. 
-
-We then created a table showing the RMSE and DS for each month using M2.
+This was the basis for us choosing M2 as our final model. We created a table showing the RMSE and DS for each month using M2.
 
 ```{r Table 2 RMSE and DS by month}
 
@@ -219,19 +209,16 @@ kable(m2_comparison,
 
 The model with minimum daily temperature has the lowest scores whereas the temp_max model has consistently the highest scores. Generally, the scores from the mean and minimum models are very similar, in particular the DS score is identical up to 2 d.p. We conclude predictive performance is best when temp_min is used as the basis for the temperature terms. This is physically plausible as temperatures are lowest at either side of the working day, when we expect most people to cycle.
 
-At $5^\circ$c, a $1^\circ$c increase is associated with approximately 46 additional cyclists.
-
-At $15^\circ$c, a $1 ^\circ$c increase is associated with approximately 200 fewer cyclists. Which is expected based on the negative quadratic curve at $15^\circ$c in figure 3, thus at higher temperatures, with all other variables constant, we anticipate a decrease in count.
+At $5^\circ$c, a $1^\circ$c increase is associated with approximately 46 additional cyclists. At $15^\circ$c, a $1 ^\circ$c increase is associated with approximately 200 fewer cyclists. Which is expected based on the negative quadratic curve at $15^\circ$c in Figure 3, thus at higher temperatures, with all other variables constant, we anticipate a decrease in count.
 
 
 ### Seasonal Prediction Accuracy
 
 The lowest RMSE and DS scored month is July, followed closely by June. Thus, the mean differences between the predicted and actual values are lowest for June and July; M2 best predicts the count (including uncertainty) for these months. Cycle numbers are generally higher during these months, and the weather is generally consistent. Furthermore, there are no major holidays falling within these months that could lead to spikes or dips in numbers. 
 
-The highest RMSE and DS scores come from April, followed by March. This indicates a poor fit of M2, and a worse prediction of the mean cycle count and variation in count.
-Some of the March volatility may come from the March 2020 stratum, when lockdown was dramatically enforced and restrictions were most severe and respected. The weather, especially rainfall is most volatile during spring. For instance, a day with higher temperatures but heavy rainfall is likely to result in less cyclists. We hypothesise rainfall may be a greater influence than temperature but but the data doesn't account for this.
+The highest RMSE and DS scores come from April, followed by March. This indicates a poor fit of M2, and a worse prediction of the mean cycle count and variation in count. Some of the March volatility may come from the March 2020 stratum, when lockdown was dramatically enforced and restrictions were most severe and respected. The weather, especially rainfall is most volatile during spring. For instance, a day with higher temperatures but heavy rainfall is likely to result in less cyclists. We hypothesise rainfall may be a greater influence than temperature but but the data doesn't account for this.
 
-The August scores are considerably higher than other summer months. We hypotheise this is due to the cycling event in August 2022 introduced earlier, which saw exceptionally high cyclist count compared to other years. The prediction accuracy is limited since the data does not account for holidays and special events, such as the cycling event or Fringe Festival. This is a limitation of both the model and data, since with the improved data, a more comprehensive model could be built.
+The August scores are considerably higher than other summer months. We hypothesise this is due to the cycling event in August 2022 introduced earlier, which saw exceptionally high cyclist count compared to other years. The prediction accuracy is limited since the data does not account for holidays and special events, such as the cycling event or Fringe Festival. This is a limitation of both the model and data, since with the improved data, a more comprehensive model could be built.
 
 ### Long-term trend and extrapolation
 
@@ -245,17 +232,13 @@ kable(table3_final,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-The estimated annual change in daily cyclist count for our final model M2 is -683. Thus for each year passed, we predict 683 fewer daily cyclists. The predicted number of cyclists on the first day of observations (1st January 2020) is 12,463. Therefore, the daily cyclist count is estimated to drop by $5.48 \%$ per year. If this trend were to continue, then the daily cyclist count would half within 9 to 10 years.
-
-Additionally, the trend coefficient for all of the models have extremely small p-values (less than 0.01). This provides strong evidence that the downward trend observed in the daily cyclist count is not random, but is instead an observable decline in cycling demand over the 5 year period. 
+The estimated annual change in daily cyclist count for our final model M2 is -683. Thus for each year passed, we predict 683 fewer daily cyclists. The predicted number of cyclists on the first day of observations (1st January 2020) is 12,463. Therefore, the daily cyclist count is estimated to drop by $5.48 \%$ per year. If this trend were to continue, then the daily cyclist count would half within 9 to 10 years. Additionally, the trend coefficient for all of the models have extremely small p-values (less than 0.01). This provides strong evidence that the downward trend observed in the daily cyclist count is not random, but is instead an observable decline in cycling demand over the 5 year period. 
 
 $\textbf{Model consistency}$ 
 
-M1 and M2 produced similar results, with annual declines of -692 and -683 respectively. This suggests that the trend estimate is robust even when accounting for the quadratic effect of temperature, the month and days of week factor variables. M3 shows a steeper decline of -887 cyclists per year, approximately 30% lower than M2.
+M1 and M2 produced similar results, with annual declines of -692 and -683 respectively. This suggests that the trend estimate is robust even when accounting for the quadratic effect of temperature, the month and days of week factor variables. M3 shows a steeper decline of -887 cyclists per year, approximately 30% lower than M2. 
 
-This difference is likely due to the logarithmic scale in M3, which is more sensitive to relative percentage changes. M3 includes indicators for the Covid and festive holidays, so accounts for the variance associated with each to isolate the downward trend. 
-
-Despite variations in magnitude, we observe the negative trend coefficient that is highly significant for all models demonstrates and thus the variable is a robust addition to model
+This difference is likely due to the logarithmic scale in M3, which is more sensitive to relative percentage changes. M3 includes indicators for the Covid and festive holidays, so accounts for the variance associated with each to isolate the downward trend.Despite variations in magnitude, we observe the negative trend coefficient that is highly significant for all models demonstrates and thus the variable is a robust addition to model
 
 $\textbf{Covid Distortion}$ 
 
@@ -272,7 +255,7 @@ We projected demand to 2035 using Model M2, holding weather and seasonality cons
 extrapolation_plot
 ```
 
-While July typically sees peak cycling volumes, the model indicates a downward trajectory. As shown in Figure 11, the projected daily count starts at approximately 15,000 in 2020 and falls to roughly 5000 by 2035. At this rate, summer weekday counts are expected to drop below 10,000 on the 2nd of February 2027, and reach 5000 by the 26th of May 2034. 
+While July typically sees peak cycling volumes, the model indicates a downward trajectory. As shown in Figure 10, the projected daily count starts at approximately 15,000 in 2020 and falls to roughly 5000 by 2035. At this rate, summer weekday counts are expected to drop below 10,000 on the 2nd of February 2027, and reach 5000 by the 26th of May 2034. 
 
 This extrapolation may not hold if policy or economic factors shift. Expanding Low Emission Zones or rising petrol prices may disincentivise driving, while removing the under-22 Free Bus Scheme might encourage younger demographics to return to cycling. Additionally, Edinburgh's growing population could sustain a minimum demand level that a linear trend does not take into account.
 
@@ -283,7 +266,7 @@ This extrapolation may not hold if policy or economic factors shift. Expanding L
 plot_residuals_years
 ```
 
-Figure 12 shows that Model M2 performs poorly during April 2022, where the actual cyclist count exceeded predictions by over 10,000. During this period, the model recorded a mean residual of +8,033 and an RMSE of 10,528 - over double the model's LOYO RMSE. This systematic under-prediction likely stems from the Edinburgh International Science Festival (9th-24th April 2022), which attracted 50,000 participants and emphasised climate urgency$^{2}$. Following two years of lockdown cancellations, this event created a demand spike that the baseline model could not anticipate.
+Figure 11 shows that Model M2 performs poorly during April 2022, where the actual cyclist count exceeded predictions by over 10,000. During this period, the model recorded a mean residual of +8,033 and an RMSE of 10,528 - over double the model's LOYO RMSE. This systematic under-prediction likely stems from the Edinburgh International Science Festival (9th-24th April 2022), which attracted 50,000 participants and emphasised climate urgency$^{2}$. Following two years of lockdown cancellations, this event created a demand spike that the baseline model could not anticipate.
 
 ### Original diagnostic plot
 
@@ -293,12 +276,12 @@ We designed a Cook's Distance plot over time to show the degree of influence tha
 faceted_cooks_plot
 ```
 
-Figure 13 identifies three points in August 2022 as having the highest influence on the model. This is in line with Figure 1, likely due to Edinburgh-London-Edinburgh race. Additional high-influence points in Spring 2022 coincide with the final lifting of Covid restrictions, a period where both commuting and leisure cycling surged. From a planning perspective, these findings highlight a critical limitation: while M2 is effective for baseline trends, it can't account for exceptional events causing spikes. Planners must prepare for this, particularly during the Fringe Festival and major bike races, by adjusting infrastructure and safety measures beyond what the standard model suggests.
+Figure 12 identifies three points in August 2022 as having the highest influence on the model. This is in line with Figure 1, likely due to Edinburgh-London-Edinburgh race. Additional high-influence points in Spring 2022 coincide with the final lifting of Covid restrictions, a period where both commuting and leisure cycling surged. From a planning perspective, these findings highlight a critical limitation: while M2 is effective for baseline trends, it can't account for exceptional events causing spikes. Planners must prepare for this, particularly during the Fringe Festival and major bike races, by adjusting infrastructure and safety measures beyond what the standard model suggests.
 
 
 # Discussion and limitations
 
-The model assumptions generally appear satisfied, as shown in Figure 7. It is worth noting the point of high leverage, shown in Figure 13 to correspond to the August 2022 cycle race. While this outlier influences the model, the quadratic temperature terms and daily trend effectively capture the data's primary structure.
+The model assumptions generally appear satisfied, as shown in Figure 7. It is worth noting the point of high leverage, shown in Figure 12 to correspond to the August 2022 cycle race. While this outlier influences the model, the quadratic temperature terms and daily trend effectively capture the data's primary structure.
 
 A key limitation is the five-year observation window, which was heavily impacted by COVID-19. Access to pre-pandemic years would better encapsulate seasonality and highlight effects the model may have missed, such as the 2020 Fringe Festival closure. Furthermore, the lack of data on rainfall and wind speed is a constraint; interaction effects between these variables and temperature would likely predict cyclist counts more accurately than mean temperature alone.
 
