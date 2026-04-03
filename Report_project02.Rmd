@@ -3,12 +3,12 @@ title: 'Project 2: Modelling daily cycling demand in Edinburgh'
 author: 'Group members: Alice Miller, Saba Sitter, Jake Saunders'
 date: 'Word count: [XXX words]'
 output:
+  html_document:
+    df_print: paged
   pdf_document:
     number_sections: true
     fig_caption: true
     latex_engine: xelatex
-  html_document:
-    df_print: paged
   word_document: default
 header-includes:
 - \usepackage{booktabs}
@@ -248,7 +248,7 @@ kable(m2_comparison,
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE) 
 ```
 
-The model fit with the minimum daily temperature has the lowest scores, and the model with maximum temperature has the highest scores. The differences between the scores for the model fit with the mean and minimum temperatures don't differ greatly (especially the DS score which appears the same to 2 d.p). This indicates that the predictive performance is best when the minimum temperature is used as the basis for the temperature terms. 
+The model with minimum daily temperature has the lowest scores whereas the temp_max model has the highest scores. Generally, the scores from the mean and minimum models are very similar, in particular the DS score is identical up to 2 d.p. We conclude predictive performance is best when temp_min is used as the basis for the temperature terms. This is physically plausible as temperatures are lowest at either side of the working day, when we expect most people to cycle.
 
 At $5^\circ$c, a $1^\circ$c increase is associated with approximately 46 additional cyclists.
 
