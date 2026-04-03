@@ -515,7 +515,7 @@ cycle_daily_df$cooks_d <- cooks.distance(mbest)
 cycle_daily_df$obs_index <- 1:nrow(cycle_daily_df)
 
 # Faceted plot
-ggplot(cycle_daily_df, aes(x = obs_index, y = cooks_d)) +
+faceted_cooks_plot <- ggplot(cycle_daily_df, aes(x = obs_index, y = cooks_d)) +
   geom_segment(aes(xend = obs_index, yend = 0), color = "steelblue", alpha = 0.7) +
   geom_hline(yintercept = 4/nrow(cycle_daily_df), linetype = "dashed", color = "red") +
   facet_wrap(~factor(month, levels = month.abb), scales = "free_x") +
