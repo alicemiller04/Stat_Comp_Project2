@@ -285,28 +285,22 @@ This extrapolation may not hold in practice because it doesn't take into account
 
 ### Identifying a poorly fit period
 
-To examine the residuals of the model we created a plot of the residuals over time, with different lines representing different years.
-
 ```{r plot residuals vs time, fig.cap="Plot of Residuals vs Time, coloured by year", fig.height = 3, fig.width = 6}
 plot_residuals_years
 ```
 
-We can see from Figure 12 that model M2 is noticeably performing poorly during the period of April 2022. From Figure 12 we can infer that the actual cyclist count during this period was over 10,000 more than what M2 predicted. During this period, the model recorded a mean residual of +8,033 and an RMSE of 10,528.
-
-Because the mean residual is positive, the model systematically under-predicts cycling count during this period, which is also clear from Figure 12. The magnitude of the RMSE is more than double the LOYO RMSE score for M2, indicating a significant failure to capture the actual cycling volume.
-
-This under-fit is likely due to the Edinburgh International Science Festival taking place from the 9th -24th April 2022 which brought in 50,000 participants and specifically boasted 'an unashamed emphasis on the urgency of tackling the climate crisis'$^{2}$. The cycle count may have been inflated because of the environmental emphasis of the festival and high numbers as the previous years' festivals did not take place due to the lockdown. From a planning perspective this highlights a limitation of the model. While it is effective for baseline commuter trends, it cannot account for significant events that massively affect the cyclist count. 
-
+Figure 12 shows that Model M2 performs poorly during April 2022, where the actual cyclist count exceeded predictions by over 10,000. During this period, the model recorded a mean residual of +8,033 and an RMSE of 10,528 - over double the model's LOYO RMSE. This systematic under-prediction likely stems from the Edinburgh International Science Festival (9th-24th April 2022), which attracted 50,000 participants and emphasised climate urgency$^{2}$. Following two years of lockdown cancellations, this event created a demand spike that the baseline model could not anticipate.
 
 ### Original diagnostic plot
 
-We created a plot of Cook's Distance over time to show the degree of influence that each month exerts on the model, with lines seperated by year. 
+We designed a Cook's Distance plot over time to show the degree of influence that each month in each year exerts.
 
 ```{r cooks distance plot over time, fig.cap="Plot of Cook's distance over time", fig.height = 4, fig.width = 6}
 faceted_cooks_plot
 ```
 
-We can see from Figure 13 that 3 points during August 2022 are exerting the highest influence by far on the model. This is in line with our observations from Figure 1 that there was a spike in this period due to the Edinburgh-London-Edinburgh race that took place. This is followed by variations in Spring, also in 2022, which we also can note from Figure 1 had higher-than-usual cyclist counts. This period saw an end to lockdown restrictions, leading more commuters to cycle to work and also more people to cycle for pleasure. As the restrictions are now over, this is likely something that won't have to be accounted for in the future. Transport planners should be prepared, especially during the Fringe in August, to account for exceptionally high cyclist counts due to races and/or sunny days and adjust accordingly. 
+Figure 13 identifies three points in August 2022 as having the highest influence on the model. This is in line with Figure 1, likely due to Edinburgh-London-Edinburgh race. Additional high-influence points in Spring 2022 coincide with the final lifting of Covid restrictions, a period where both commuting and leisure cycling surged. From a planning perspective, these findings highlight a critical limitation: while M2 is effective for baseline trends, it can't account for exceptional events causing spikes. Planners must prepare for this, particularly during the Fringe Festival and major bike races, by adjusting infrastructure and safety measures beyond what the standard model suggests.
+
 
 # Discussion and limitations
 
